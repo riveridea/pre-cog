@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+###################################################
+##transition detect
+###################################################
+ -->
+<block>
+    <name>Transition Detect</name>
+    <key>precog_transition_detect</key>
+    <import>import precog</import>
+    <make>precog.transition_detect()</make>
+    <sink>
+        <name>in</name>
+        <type>byte</type>
+    </sink>
+    <source>
+        <name>out</name>
+        <type></type>
+    </source>
+    <doc>
+Output msg when byte value changes on input stream.
+    </doc>
+</block>
