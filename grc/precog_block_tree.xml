@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<!--
+ Copyright 2011-2012 Free Software Foundation, Inc_
+ 
+ This file is part of GNU Radio
+ 
+ GNU Radio is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 3, or (at your option)
+ any later version_
+ 
+ GNU Radio is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE_  See the
+ GNU General Public License for more details_
+ 
+ You should have received a copy of the GNU General Public License
+ along with GNU Radio; see the file COPYING_  If not, write to
+ the Free Software Foundation, Inc_, 51 Franklin Street,
+ Boston, MA 02110-1301, USA_
+-->
+
+<!--
+###################################################
+##Block Tree for GR Extras
+###################################################
+ -->
+<cat>
+    <name></name> <!-- Blank for Root Name -->
+    <cat>
+        <name>Pre-Cog</name>
+        <block>append_key</block>
+        <block>channel_access_controller</block>
+        <block>burst_gate</block>
+        <block>heart_beat</block>
+        <block>simple_mac</block>
+        <block>tdma_engine</block>
+        <block>fhss_engine_tx</block>
+        <block>fhss_engine_rx</block>
+        <block>virtual_channel_demux</block>
+        <block>virtual_channel_formatter</block>
+        <block>virtual_channel_mux</block>
+        <block>precog_msg_to_stdout</block>
+        
+    </cat>
+</cat>
