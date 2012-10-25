@@ -32,7 +32,7 @@ list(APPEND grc_sources
     virtual_channel_demux.xml
     fhss_engine_tx.xml
     fhss_engine_rx.xml
-    block_tree.xml
+    precog_block_tree.xml
     packet_framer.xml
     packet_deframer.xml
     msg_to_stdout.xml

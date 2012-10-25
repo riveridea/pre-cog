@@ -115,7 +115,7 @@ class fhss_engine_tx(gr.block):
 
         self.has_old_msg = False
         self.overhead = 20
-        self.pad_data = numpy.zeros( ( 1, 1500),dtype='uint8')[0]
+        self.pad_data = numpy.zeros( ( 1, 5),dtype='uint8')[0]
         #print self.pad_data
         self.tx_slots_passed = 0
     

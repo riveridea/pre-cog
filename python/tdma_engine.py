@@ -29,8 +29,6 @@ import gnuradio.extras #brings in gr.block
 import Queue
 import time
 import math
-import extras_swig 
-
 
 BROADCAST_ADDR = 255
 

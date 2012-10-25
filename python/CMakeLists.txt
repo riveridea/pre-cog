@@ -39,6 +39,7 @@ list(APPEND python_sources
     msg_to_stdout.py
     virtual_channel_mux.py
     virtual_channel_demux.py
+    transition_detect.py
 )
 
 GR_PYTHON_INSTALL(
