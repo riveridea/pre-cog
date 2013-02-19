@@ -186,6 +186,11 @@ class my_top_block(gr.top_block):
         self._socket_ctrl_chan = socket_ctrl_channel(self._node_type, self)
         # start the socket server to capture the control messages
         self._socket_ctrl_chan._sock_server.start()
+        
+        self.sample_rate = options.samp_rate
+        self.center_freq = options.center_freq
+        self.rx_gain = options.rx_gain
+        self.tx_gain = options.tx_gain        
 
         if(options.sx_freq is not None):
             # Work-around to get the modulation's bits_per_symbol
@@ -200,36 +205,11 @@ class my_top_block(gr.top_block):
             self._tx_freq = options.sx_freq # use the same frequence 
             self._sample_rate = ask_sample_rate
 
-            # configuration the usrp sensors and transmitters
-            # Automatically USRP devices discovery
-            devices = uhd.find_devices_raw()
-            n_devices = len(devices)
-            addrs = []
-        
-            if (n_devices == 0):
-                sys.exit("no connected devices")
-            elif (n_devices >= 1):
-                for i in range(n_devices):
-                        addr_t = devices[i].to_string()  #ex. 'type=usrp2,addr=192.168.10.109,name=,serial=E6R14U3UP'
-                        addrs.append(addr_t[11:30]) # suppose the addr is 192.168.10.xxx
-                        addrs[i]
-                
-            if (n_devices == 1 and self._node_type == CLUSTER_NODE):
-                sys.exit("only one devices for the node, we need both communicator and sensor for cluster node")
-            elif (n_devices > 1 and self._node_type == CLUSTER_HEAD):
-                sys.exit("only one devices is need for cluster head")
-
+ 
             # Configure Sensors, with all GPS sync
             self.sensors = []
             for i in range(n_devices):
-                self.sensors.append(uhd_sensor(addrs[i], ask_sample_rate,
-                                                options.sx_freq, options.sx_gain,
-                                                options.sx_spec, options.sx_antenna, 
-                                                options.verbose))
-                self.sensors[i].u.set_start_on_demand()  # the sensor will start sensing on demand												
-                if self.sensors[i].u.get_time_source(0) == "none":
-                    self.sensors[i].u.set_time_source("mimo", 0)  # Set the time source without GPS to MIMO cable
-                    self.sensors[i].u.set_clock_source("mimo",0) 
+
 					
 	        	# file sinks
                 filename = "%s_sensed.dat" %(NODES_PC*self._node_id + i)
@@ -258,6 +238,119 @@ class my_top_block(gr.top_block):
                  #print 'Locked'
 
         self.timer =  threading.Timer(1, self.start_streaming)
+    
+    def find_all_devices(self):
+        # configuration the usrp sensors and transmitters
+        # Automatically USRP devices discovery
+        self.devices = uhd.find_devices_raw()
+        self.n_devices = len(devices)
+        self.addrs = []
+        
+        if (self.n_devices == 0):
+            sys.exit("no connected devices")
+        elif (self.n_devices >= 1):
+            for i in range(self.n_devices):
+                addr_t = self.devices[i].to_string()  #ex. 'type=usrp2,addr=192.168.10.109,name=,serial=E6R14U3UP'
+                self.addrs.append(addr_t[11:30]) # suppose the addr is 192.168.10.xxx
+                self.addrs[i]
+                
+        if (n_devices == 1 and self._node_type == CLUSTER_NODE):
+            sys.exit("only one devices for the node, we need both communicator and sensor for cluster node")
+        elif (n_devices > 1 and self._node_type == CLUSTER_HEAD):
+            sys.exit("only one devices is need for cluster head")
+   
+    
+    def setup_usrp_sources(self):
+        self.rcvs = []
+        for i in range(self.n_devices):
+            self.rcvs.append(uhd.usrp_source(self.addrs[i],
+                                             stream_args=uhd.stream_args(
+				                         cpu_format="fc32",
+				                         channels=range(1),
+			                                 ),
+			                    )
+			    )			    
+            self.rcvs[i].set_start_on_demand()  # the sensor will start sensing onmand												
+            if self.rcvs[i].get_time_source(0) == "none":
+                self.rcvs[i].set_time_source("mimo", 0)  # Set the time source without GPS to MIMO cable
+                self.rcvs[i].set_clock_source("mimo",0)
+            self.rcvs[i].set_samp_rate(self.sample_rate)
+	    self.rcvs[i].set_center_freq(self.center_freq, 0)
+	    self.rcvs[i].set_gain(self.rx_gain, 0)
+	    self.rcvs[i].set_antenna("RX2", 0)        
+    
+    def setup_bpsk_mods(self):
+        self.bpskmods = []
+        for i in range(self.n_devices):
+            self.bpskmods.append(digital.psk.psk_mod(constellation_points=2,
+		                                     mod_code="none",
+		                                     differential=False,
+		                                     samples_per_symbol=2,
+		                                     excess_bw=0.35,
+		                                     verbose=False,
+		                                     log=True,
+		                                    ))
+    
+    def setup_packet_deframers():
+        self.pktdefrms = []
+        for i in range(self.n_devices):
+            self.pktdefrms.append(gr_extras.packet_framer(samples_per_symbol=1,
+		                                          bits_per_symbol=1,
+		                                          access_code="",
+		                                         ))
+    
+    def setup_tdma_engines(self):
+        self.tdmaegns = []
+        for i in range(self.n_devices):
+            initial_slot = NODES_PC*self._node_id + i
+            number_of_slots = NETWORKSIZE
+            self.tdmaegns.append(precog.tdma_engine(initial_slot,
+                                                    options.slot_interval,
+                                                    options.guard_interval,
+                                                    options.number_of_slots,
+                                                    options.lead_limit,
+                                                    options.link_rate))
+    
+    def setup_packet_framers(self):
+        self.pktfrms = []
+        for i in range(self.n_devices):
+            self.pktfrms.append(gr_extras.packet_deframer(access_code="",
+                                                          threshold=-1,))
+    
+    def setup_bpsk_demods(self):
+        self.bpskdemods = []
+        for i in range(self.n_devices):
+            self.bpskdemods.append(digital.psk.psk_demod(constellation_points=2,
+		                                         differential=True,
+		                                         samples_per_symbol=2,
+		                                         excess_bw=0.35,
+		                                         phase_bw=6.28/100.0,
+		                                         timing_bw=6.28/100.0,
+		                                         mod_code="gray",
+		                                         verbose=False,
+		                                         log=False,))
+    
+    def setup_multiply_consts(self):
+        self.mlts = []
+        for i in range(self.n_devices):
+            self.mlts.append(gr.multiply_const_vcc((ampl, )))
+    
+    def setup_burst_gates(self):
+        self.bstgts = []
+        for i in range(self.n_devices):
+            self.bstgts.append(precog.burst_gate())
+    
+    def setup_usrp_sinks(self):
+        self.sinks = []
+        for i in range(self.n_devices):
+            self.sinks.append(uhd.usrp_sink(device_addr=args,
+			                    stream_args=uhd.stream_args(
+				cpu_format="fc32",
+				channels=range(1),
+			),
+		))
+    
+    def make_all_connections(self):
 	
     def start_tdma_net(self, start_time, burst_duration, idle_duration):
         # specify the tdma pulse parameters and connect the 
@@ -345,7 +438,21 @@ def main():
                           help="Select node type from: %s [default=%%default]"
                                 % (', '.join(node_types.keys()),))
     parser.add_option("-i", "--node-index", type="intx", default=0, 
-                          help="Specify the node index in the cluster [default=%default]")					  
+                          help="Specify the node index in the cluster [default=%default]")
+                          
+    ###############################
+    # Options for radio parameters
+    ###############################
+    parser.add_option("-lr", "--link-rate", type="eng_float", default=None,
+                      help="specify the link data rate")
+    parser.add_option("-sr", "--samp-rate", type="eng_float", default=None,
+                      help="specify the sample rate for the USRP")
+    parser.add_option("-cf", "--center-freq", type="eng_float", default=None,
+                      help="specify the cetner frequency for the USRP")
+    parser.add_option("-tg", "--tx-gain", type="eng_float", default=None,
+                      help="specify the tx gain for the USRP")                  					  
+    parser.add_option("-rg", "--rx-gain", type="eng_float", default=None,
+                      help="specify the rx gain for the USRP")    
 					  
     receive_path.add_options(parser, expert_grp)
     transmit_path.add_options(parser, expert_grp)
