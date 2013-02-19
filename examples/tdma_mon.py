@@ -343,8 +343,8 @@ class my_top_block(gr.top_block):
             print 'make all connections'
             # Trasnmitting Path
             self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
-            self.connect((self.tdmaegns[i], 0), (self.pktdefrms[i], 0))
-            self.connect((self.pktdefrms[i], 0), (self.bpskmods[i], 0))
+            self.connect((self.tdmaegns[i], 0), (self.pktdfrms[i], 0))
+            self.connect((self.pktdfrms[i], 0), (self.bpskmods[i], 0))
             self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
             self.connect((self.mlts[i], 0), (self.bstgts[i], 0))
             self.connect((self.bstgts[i], 0), (self.sinks[i], 0))
