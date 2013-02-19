@@ -268,9 +268,9 @@ class my_top_block(gr.top_block):
     
     def setup_packet_deframers(self):
         print 'setup_packet_deframers'
-        self.pktdefrms = []
+        self.pktdfrms = []
         for i in range(self.n_devices):
-            self.pktdefrms.append(gr_extras.packet_framer(samples_per_symbol=1,
+            self.pktdfrms.append(gr_extras.packet_framer(samples_per_symbol=1,
 		                                          bits_per_symbol=1,
 		                                          access_code="",
 		                                         ))
