@@ -175,6 +175,7 @@ class tdma_engine(gr.block):
         #print total_byte_count
         
     def work(self, input_items, output_items):
+        print 'tdma_engine:work()'
         
         #check for msg inputs when work function is called
         if self.check_msg_queue():
