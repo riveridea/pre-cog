@@ -414,15 +414,15 @@ def main():
     ###############################
     # Options for radio parameters
     ###############################
-    parser.add_option("-lr", "--linkrate", type="eng_float", default=None,
+    parser.add_option("-l", "--link-rate", type="eng_float", default=None,
                       help="specify the link data rate")
-    parser.add_option("-sr", "--samprate", type="eng_float", default=None,
+    parser.add_option("", "--samp-rate", type="eng_float", default=None,
                       help="specify the sample rate for the USRP")
-    parser.add_option("-cf", "--centerfreq", type="eng_float", default=None,
+    parser.add_option("-f", "--center-freq", type="eng_float", default=None,
                       help="specify the cetner frequency for the USRP")
-    parser.add_option("-tg", "--txgain", type="eng_float", default=None,
+    parser.add_option("", "--tx-gain", type="eng_float", default=None,
                       help="specify the tx gain for the USRP")                  					  
-    parser.add_option("-rg", "--rxgain", type="eng_float", default=None,
+    parser.add_option("", "--rx-gain", type="eng_float", default=None,
                       help="specify the rx gain for the USRP")    
 					  
     receive_path.add_options(parser, expert_grp)
