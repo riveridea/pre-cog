@@ -24,16 +24,12 @@ from gnuradio import gr, gru, uhd
 from gnuradio import eng_notation
 from gnuradio.eng_option import eng_option
 from optparse import OptionParser
+from gnuradio.gr import firdes
+import gnuradio.extras as gr_extras
+import precog
 
 # From gr-digital
 from gnuradio import digital
-
-# from current dir
-from receive_path import receive_path
-from transmit_path import transmit_path
-#from uhd_interface import uhd_receiver
-from uhd_interface_w_sensor import uhd_transmitter
-from uhd_interface_w_sensor import uhd_sensor
 
 import struct
 import sys
@@ -344,13 +340,28 @@ class my_top_block(gr.top_block):
         self.sinks = []
         for i in range(self.n_devices):
             self.sinks.append(uhd.usrp_sink(device_addr=args,
-			                    stream_args=uhd.stream_args(
-				cpu_format="fc32",
-				channels=range(1),
-			),
-		))
+			                    stream_args=uhd.stream_args(cpu_format="fc32",
+                                                                        channels=range(1),
+                                                                       ),))
+            self.sinks[i].set_samp_rate(self.sample_rate)
+	    self.sinks[i].set_center_freq(self.center_freq, 0)
+	    self.sinks[i].set_gain(self.tx_gain, 0)
+	    self.sinks[i].set_antenna("TX/RX", 0)
     
     def make_all_connections(self):
+        for i in range(self.n_devices):
+            # Trasnmitting Path
+            self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
+            self.connect((self.tdmaegns[i], 0), (self.pktdefrms[i], 0))
+            self.connect((self.pktdefrms[i], 0), (self.bpskmods[i], 0))
+            self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
+            self.connect((self.mlts[i], 0), (self.bstgts[i], 0))
+            self.connect((self.bstgts[i], 0), (self.sinks[i], 0))
+            # Receiving Path
+            self.connect((self.rcvs[i], 0), (self.bpskdemods[i], 0))
+            self.connect((self.bpskdemods[i], 0), (self.pktdfrms[i], 0))
+            self.connect((self.pktdfrms[i], 0), (self.tdmaegns[i], 2))
+            
 	
     def start_tdma_net(self, start_time, burst_duration, idle_duration):
         # specify the tdma pulse parameters and connect the 
@@ -366,17 +377,8 @@ class my_top_block(gr.top_block):
                 #print 'specified_time = %.7f' %s_time.get_real_secs()
                 local_time = self.transmitters[i].u.get_time_now().get_real_secs()
                 print 'current time 1 = %.7f' %local_time
-                self.pulse_srcs.append(uhd.pulse_source(s_time.get_full_secs(), 
-		                                        s_time.get_frac_secs(), 
-					                self._sample_rate,
-					                idle_duration,
-					                burst_duration,
-                                                        1))
-		# Connect the pulse source to the transmitters
-                self.transmitters[i].insert_tdma_throttle(self.pulse_srcs[i])
-                self.connect(self.txpaths[i], self.transmitters[i])
 		# Set the start time for sensors                
-		self.sensors[i].u.set_start_time(uhd.time_spec_t(start_time))
+		self.rcvs[i].set_start_time(uhd.time_spec_t(start_time))
         else:
             exit("no devices on this node!")
 			
@@ -384,12 +386,12 @@ class my_top_block(gr.top_block):
         self.start()
         time.sleep(5)
         for i in range(n_devices):
-            current_time = self.sensors[i].u.get_time_now().get_real_secs()
+            current_time = self.rcvs[i].get_time_now().get_real_secs()
             print "current time 2 = %.7f" %current_time
             #print "base_s_time = %.7f" %start_time
-            self.sensors[i].u.start()
+            self.rcvs[i].start()
             #start the transmitting of data packets
-            self.tx_srcs[i].start()
+            self.sinks[i].start()
 
 # /////////////////////////////////////////////////////////////////////////////
 #                                   main
