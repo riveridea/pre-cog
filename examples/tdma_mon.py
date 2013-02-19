@@ -48,7 +48,7 @@ DEBUG = 0
 
 ds = 32
 
-NETWORK_SIZE = 32  # the number of all the USRPs
+NETWORK_SIZE = 4  # the number of all the USRPs
 
 MTU = 4096
 
@@ -268,7 +268,7 @@ class my_top_block(gr.top_block):
         self.tdmaegns = []
         for i in range(self.n_devices):
             initial_slot = NODES_PC*self._node_id + i
-            number_of_slots = NETWORKSIZE
+            number_of_slots = NETWORK_SIZE
             self.tdmaegns.append(precog.tdma_engine(initial_slot,
                                                     options.slot_interval,
                                                     options.guard_interval,
