@@ -183,7 +183,7 @@ class my_top_block(gr.top_block):
         # start the socket server to capture the control messages
         self._socket_ctrl_chan._sock_server.start()
         
-        self.link_rate = optionjs.linkrate
+        self.link_rate = options.linkrate
         self.sample_rate = options.samprate
         self.center_freq = options.centerfreq
         self.rx_gain = options.rxgain
