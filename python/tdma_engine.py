@@ -26,6 +26,7 @@ from gruel import pmt
 from gnuradio.digital import packet_utils
 import gnuradio.digital as gr_digital
 import gnuradio.extras #brings in gr.block
+from gnuradio.extras import extras_swig
 import Queue
 import time
 import math
