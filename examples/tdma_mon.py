@@ -183,11 +183,11 @@ class my_top_block(gr.top_block):
         # start the socket server to capture the control messages
         self._socket_ctrl_chan._sock_server.start()
         
-        self.link_rate = options.linkrate
-        self.sample_rate = options.samprate
-        self.center_freq = options.centerfreq
-        self.rx_gain = options.rxgain
-        self.tx_gain = options.txgain 
+        self.link_rate = options.link_rate
+        self.sample_rate = options.samp_rate
+        self.center_freq = options.center_freq
+        self.rx_gain = options.rx_gain
+        self.tx_gain = options.tx_gain 
 
         #setup the flowgraphs
         self.find_all_devices()
@@ -314,7 +314,8 @@ class my_top_block(gr.top_block):
                                                                        ),))
             self.sinks[i].set_samp_rate(self.sample_rate)
 	    self.sinks[i].set_center_freq(self.center_freq, 0)
-	    self.sinks[i].set_gain(self.tx_gain, 0)
+            if(self.tx_gain)
+	        self.sinks[i].set_gain(self.tx_gain, 0)
 	    self.sinks[i].set_antenna("TX/RX", 0)
     
     def make_all_connections(self):
