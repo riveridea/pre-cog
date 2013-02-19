@@ -183,10 +183,11 @@ class my_top_block(gr.top_block):
         # start the socket server to capture the control messages
         self._socket_ctrl_chan._sock_server.start()
         
-        self.sample_rate = options.samp_rate
-        self.center_freq = options.center_freq
-        self.rx_gain = options.rx_gain
-        self.tx_gain = options.tx_gain 
+        self.link_rate = optionjs.linkrate
+        self.sample_rate = options.samprate
+        self.center_freq = options.centerfreq
+        self.rx_gain = options.rxgain
+        self.tx_gain = options.txgain 
 
         #setup the flowgraphs
         self.find_all_devices()
@@ -413,15 +414,15 @@ def main():
     ###############################
     # Options for radio parameters
     ###############################
-    parser.add_option("-lr", "--link-rate", type="eng_float", default=None,
+    parser.add_option("-lr", "--linkrate", type="eng_float", default=None,
                       help="specify the link data rate")
-    parser.add_option("-sr", "--samp-rate", type="eng_float", default=None,
+    parser.add_option("-sr", "--samprate", type="eng_float", default=None,
                       help="specify the sample rate for the USRP")
-    parser.add_option("-cf", "--center-freq", type="eng_float", default=None,
+    parser.add_option("-cf", "--centerfreq", type="eng_float", default=None,
                       help="specify the cetner frequency for the USRP")
-    parser.add_option("-tg", "--tx-gain", type="eng_float", default=None,
+    parser.add_option("-tg", "--txgain", type="eng_float", default=None,
                       help="specify the tx gain for the USRP")                  					  
-    parser.add_option("-rg", "--rx-gain", type="eng_float", default=None,
+    parser.add_option("-rg", "--rxgain", type="eng_float", default=None,
                       help="specify the rx gain for the USRP")    
 					  
     receive_path.add_options(parser, expert_grp)
