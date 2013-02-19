@@ -94,7 +94,7 @@ class socket_server(threading.Thread):
         while 1:
             msg, (addr, port) = self._socket.recvfrom(MTU)
             
-            current_time = self._parent._owner.sensors[0].u.get_time_now().get_real_secs()
+            current_time = self._parent._owner.rcvs[0].get_time_now().get_real_secs()
             print "msg received at time of %.7f" %current_time
             print msg
             
@@ -152,7 +152,7 @@ class my_top_block(gr.top_block):
         if self._node_type == CLUSTER_HEAD:
             #self._socket_ctrl_chan._sock_client._socket.sendto("message from cluster head\n", ('<broadcast>', NODE_PORT))
             hostname = socket.gethostname()
-            current_time = self.rcvs[0].u.get_time_now().get_real_secs()
+            current_time = self.rcvs[0].get_time_now().get_real_secs()
             print "cluster head current time %.7f" %current_time
             start_time = struct.pack('!d', current_time + 10)        
             burst_duration = struct.pack('!d', BURST_LEN)
@@ -167,12 +167,12 @@ class my_top_block(gr.top_block):
             self.rcvs[0].start()
         else:  # CLUSTER_NODE will be responsible for tdma transmitting and receiving
             if DEBUG == 1:
-                stime = self.sensors[0].u.get_time_now().get_real_secs()
+                stime = self.rcvs[0].get_time_now().get_real_secs()
                 #for i in range(NODES_PC):                      
-                self.sensors[0].u.set_start_time(uhd.time_spec_t(stime + 2))
+                self.rcvs[0].set_start_time(uhd.time_spec_t(stime + 2))
                 self.start()
                 time.sleep(5)
-                self.sensors[0].u.start()
+                self.rcvs[0].start()
         
     def __init__(self, node_type, node_index, demodulator, modulator, rx_callback, options):
         gr.top_block.__init__(self)
@@ -366,7 +366,7 @@ class my_top_block(gr.top_block):
             for i in range(n_devices):
                 s_time = uhd.time_spec_t(start_time + time_slot*(NODES_PC*self._node_id + i))
                 #print 'specified_time = %.7f' %s_time.get_real_secs()
-                local_time = self.transmitters[i].u.get_time_now().get_real_secs()
+                local_time = self.rcvs[i].get_time_now().get_real_secs()
                 print 'current time 1 = %.7f' %local_time
 		# Set the start time for sensors                
 		self.rcvs[i].set_start_time(uhd.time_spec_t(start_time))
