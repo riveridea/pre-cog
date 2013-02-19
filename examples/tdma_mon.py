@@ -328,6 +328,7 @@ class my_top_block(gr.top_block):
     
     def make_all_connections(self):
         for i in range(self.n_devices):
+            print 'make all connections'
             # Trasnmitting Path
             self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
             self.connect((self.tdmaegns[i], 0), (self.pktdefrms[i], 0))
