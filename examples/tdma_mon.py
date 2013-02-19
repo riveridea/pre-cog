@@ -425,11 +425,6 @@ def main():
     parser.add_option("", "--rx-gain", type="eng_float", default=None,
                       help="specify the rx gain for the USRP")    
 					  
-    receive_path.add_options(parser, expert_grp)
-    transmit_path.add_options(parser, expert_grp)
-    uhd_sensor.add_options(parser)
-    uhd_transmitter.add_options(parser)
-
     for mod in demods.values():
         mod.add_options(expert_grp)
 
@@ -438,13 +433,6 @@ def main():
     if len(args) != 0:
         parser.print_help(sys.stderr)
         sys.exit(1)
-
-    if options.from_file is None:
-        if (options.sx_freq is None):
-            sys.stderr.write("You must specify -f FREQ or --freq FREQ\n")
-            parser.print_help(sys.stderr)
-            sys.exit(1)
-
 
     # build the graph
     tb = my_top_block(node_types[options.node_type],
