@@ -219,9 +219,9 @@ class my_top_block(gr.top_block):
                 self.addrs.append(addr_t[11:30]) # suppose the addr is 192.168.10.xxx
                 self.addrs[i]
                 
-        if (n_devices == 1 and self._node_type == CLUSTER_NODE):
+        if (self.n_devices == 1 and self._node_type == CLUSTER_NODE):
             sys.exit("only one devices for the node, we need both communicator and sensor for cluster node")
-        elif (n_devices > 1 and self._node_type == CLUSTER_HEAD):
+        elif (self.n_devices > 1 and self._node_type == CLUSTER_HEAD):
             sys.exit("only one devices is need for cluster head")
    
     
