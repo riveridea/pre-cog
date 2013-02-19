@@ -71,6 +71,7 @@ class tdma_engine(gr.block):
             num_msg_outputs = 2,
         )
     
+        print ' tdma engine initialization'
         self.mgr = pmt.pmt_mgr()
         for i in range(64):
             self.mgr.set(pmt.pmt_make_blob(10000))
