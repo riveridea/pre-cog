@@ -153,6 +153,7 @@ class my_top_block(gr.top_block):
             #self._socket_ctrl_chan._sock_client._socket.sendto("message from cluster head\n", ('<broadcast>', NODE_PORT))
             hostname = socket.gethostname()
             current_time = self.rcvs[0].get_time_now().get_real_secs()
+            start_time_v = current_time + 10
             print "cluster head current time %.7f" %current_time
             start_time = struct.pack('!d', current_time + 10)        
             burst_duration = struct.pack('!d', BURST_LEN)
@@ -163,7 +164,7 @@ class my_top_block(gr.top_block):
             #self._socket_ctrl_chan._sock_client._socket.sendto(hostname, ('<broadcast>', NODE_PORT))
             self._socket_ctrl_chan._sock_client._socket.sendto(payload, ('<broadcast>', NODE_PORT))
 
-            self.rcvs[0].set_start_time(uhd.time_spec_t(start_time))
+            self.rcvs[0].set_start_time(uhd.time_spec_t(start_time_v))
             self.rcvs[0].start()
         else:  # CLUSTER_NODE will be responsible for tdma transmitting and receiving
             if DEBUG == 1:
@@ -358,12 +359,10 @@ class my_top_block(gr.top_block):
         # specify the tdma pulse parameters and connect the 
         # pulse source to usrp sinker also specify the usrp source
         # with the specified start time
-        self.pulse_srcs = []
-        n_devices = len(self.transmitters)
-        if (n_devices > 0):
+        if (self.n_devices > 0):
             time_slot = (burst_duration + idle_duration)/NETWORK_SIZE
             #print 'base_s_time = %.7f' %start_time
-            for i in range(n_devices):
+            for i in range(self.n_devices):
                 s_time = uhd.time_spec_t(start_time + time_slot*(NODES_PC*self._node_id + i))
                 #print 'specified_time = %.7f' %s_time.get_real_secs()
                 local_time = self.rcvs[i].get_time_now().get_real_secs()
