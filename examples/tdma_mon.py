@@ -326,10 +326,12 @@ class my_top_block(gr.top_block):
         print 'setup_usrp_sinks'
         self.sinks = []
         for i in range(self.n_devices):
-            self.sinks.append(uhd.usrp_sink(device_addr=args,
+            self.sinks.append(uhd.usrp_sink(self.addrs[i],
 			                    stream_args=uhd.stream_args(cpu_format="fc32",
                                                                         channels=range(1),
-                                                                       ),))
+                                                                       ),
+                                           )
+                             )
             self.sinks[i].set_samp_rate(self.sample_rate)
 	    self.sinks[i].set_center_freq(self.center_freq, 0)
             if(self.tx_gain):
