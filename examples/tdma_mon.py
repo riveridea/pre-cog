@@ -282,7 +282,7 @@ class my_top_block(gr.top_block):
                                                     0.002,#options.guard_interval,
                                                     number_of_slots,#options.number_of_slots,
                                                     0.020,#options.lead_limit,
-                                                    options.link_rate))
+                                                    self.link_rate))
     
     def setup_packet_framers(self):
         self.pktfrms = []
