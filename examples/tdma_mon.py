@@ -276,7 +276,7 @@ class my_top_block(gr.top_block):
 		                                         ))
     
     def setup_tdma_engines(self):
-        print 'setup_tdma_engines'
+        print ' setup_tdma_engines'
         self.tdmaegns = []
         for i in range(self.n_devices):
             initial_slot = NODES_PC*self._node_id + i
@@ -287,9 +287,10 @@ class my_top_block(gr.top_block):
                                                     number_of_slots,#options.number_of_slots,
                                                     0.020,#options.lead_limit,
                                                     self.link_rate))
+            print ' appended a tdma engine'
     
     def setup_packet_framers(self):
-        print 'setup_packet_framers'
+        print ' setup_packet_framers'
         self.pktfrms = []
         for i in range(self.n_devices):
             self.pktfrms.append(gr_extras.packet_deframer(access_code="",
