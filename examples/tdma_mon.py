@@ -234,6 +234,7 @@ class my_top_block(gr.top_block):
    
     
     def setup_usrp_sources(self):
+        print 'setup_usrp_sources'
         self.rcvs = []
         for i in range(self.n_devices):
             self.rcvs.append(uhd.usrp_source(self.addrs[i],
@@ -253,6 +254,7 @@ class my_top_block(gr.top_block):
 	    self.rcvs[i].set_antenna("RX2", 0)        
     
     def setup_bpsk_mods(self):
+        print 'setup_bpsk_mods'
         self.bpskmods = []
         for i in range(self.n_devices):
             self.bpskmods.append(digital.psk.psk_mod(constellation_points=2,
@@ -265,6 +267,7 @@ class my_top_block(gr.top_block):
 		                                    ))
     
     def setup_packet_deframers(self):
+        print 'setup_packet_deframers'
         self.pktdefrms = []
         for i in range(self.n_devices):
             self.pktdefrms.append(gr_extras.packet_framer(samples_per_symbol=1,
@@ -273,6 +276,7 @@ class my_top_block(gr.top_block):
 		                                         ))
     
     def setup_tdma_engines(self):
+        print 'setup_tdma_engines'
         self.tdmaegns = []
         for i in range(self.n_devices):
             initial_slot = NODES_PC*self._node_id + i
@@ -285,12 +289,14 @@ class my_top_block(gr.top_block):
                                                     self.link_rate))
     
     def setup_packet_framers(self):
+        print 'setup_packet_framers'
         self.pktfrms = []
         for i in range(self.n_devices):
             self.pktfrms.append(gr_extras.packet_deframer(access_code="",
                                                           threshold=-1,))
     
     def setup_bpsk_demods(self):
+        print 'setup_bpsk_demods'
         self.bpskdemods = []
         for i in range(self.n_devices):
             self.bpskdemods.append(digital.psk.psk_demod(constellation_points=2,
@@ -304,16 +310,19 @@ class my_top_block(gr.top_block):
 		                                         log=False,))
     
     def setup_multiply_consts(self):
+        print 'setup_multiply_consts'
         self.mlts = []
         for i in range(self.n_devices):
             self.mlts.append(gr.multiply_const_vcc((ampl, )))
     
     def setup_burst_gates(self):
+        print 'setup_burst_gates'
         self.bstgts = []
         for i in range(self.n_devices):
             self.bstgts.append(precog.burst_gate())
     
     def setup_usrp_sinks(self):
+        print 'setup_usrp_sinks'
         self.sinks = []
         for i in range(self.n_devices):
             self.sinks.append(uhd.usrp_sink(device_addr=args,
