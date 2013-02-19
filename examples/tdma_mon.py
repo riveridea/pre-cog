@@ -186,52 +186,20 @@ class my_top_block(gr.top_block):
         self.sample_rate = options.samp_rate
         self.center_freq = options.center_freq
         self.rx_gain = options.rx_gain
-        self.tx_gain = options.tx_gain        
+        self.tx_gain = options.tx_gain 
 
-        if(options.sx_freq is not None):
-            # Work-around to get the modulation's bits_per_symbol
-            args = demodulator.extract_kwargs_from_options(options)
-            symbol_rate = options.bitrate / demodulator(**args).bits_per_symbol()
-            if (options.sx_samprate is None):
-                ask_sample_rate = symbol_rate*options.samples_per_symbol
-            else:
-                ask_sample_rate = options.sx_samprate
-			
-            self._rx_freq = options.sx_freq
-            self._tx_freq = options.sx_freq # use the same frequence 
-            self._sample_rate = ask_sample_rate
-
- 
-            # Configure Sensors, with all GPS sync
-            self.sensors = []
-            for i in range(n_devices):
-
-					
-	        	# file sinks
-                filename = "%s_sensed.dat" %(NODES_PC*self._node_id + i)
-                self.connect(self.sensors[i].u, gr.file_sink(gr.sizeof_gr_complex, filename))
-
-            # Configure Transmitters	
-            self.transmitters = []
-            self.txpaths = []
-            self.tx_srcs = []
-            for i in range(n_devices):	
-                self.transmitters.append(uhd_transmitter(addrs[i], symbol_rate,
-                                                options.samples_per_symbol,
-                                                options.tx_samprate,
-                                                options.tx_freq, options.tx_gain,
-                                                options.tx_spec, options.tx_antenna,
-                                                options.verbose, True))	#TDMA transmitter
-                self.txpaths.append(transmit_path(modulator, options))
-                self.tx_srcs.append(tx_data_src(self.txpaths[i]))
-                #filename = "file%.dat" %(i)
-                #self.file_src = gr.file_source(gr.sizeof_gr_complex*1, filename, True)      
-                #self.source.u.set_center_freq(uhd.tune_request(options.rx_freq, ask_sample_rate*2), 0)
-                #print 'In locking '
-                #while (self.source.u.get_sensor("lo_locked").to_bool() == False):
-                #    print '.'
-        
-                 #print 'Locked'
+        #setup the flowgraphs
+        self.find_all_devices()
+        self.setup_usrp_sources()
+        self.setup_tdma_engines()
+        self.setup_packet_framers(self)
+        self.setup_bpsk_mods()
+        self.setup_multiply_consts()
+        self.setup_burst_gates()
+        self.setup_usrp_sinks()
+        self.setup_bpsk_demods()
+        self.setup_packet_deframers()
+        self.make_all_connections()
 
         self.timer =  threading.Timer(1, self.start_streaming)
     
@@ -287,7 +255,7 @@ class my_top_block(gr.top_block):
 		                                     log=True,
 		                                    ))
     
-    def setup_packet_deframers():
+    def setup_packet_deframers(self):
         self.pktdefrms = []
         for i in range(self.n_devices):
             self.pktdefrms.append(gr_extras.packet_framer(samples_per_symbol=1,
