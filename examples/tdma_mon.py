@@ -340,8 +340,8 @@ class my_top_block(gr.top_block):
 	    self.sinks[i].set_antenna("TX/RX", 0)
     
     def make_all_connections(self):
+        print 'make all connections'
         for i in range(self.n_devices):
-            print 'make all connections'
             # Trasnmitting Path
             self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
             self.connect((self.tdmaegns[i], 0), (self.pktfrms[i], 0))
@@ -375,7 +375,7 @@ class my_top_block(gr.top_block):
         # start the flow graph and all the sensors
         self.start()
         time.sleep(5)
-        for i in range(n_devices):
+        for i in range(self.n_devices):
             current_time = self.rcvs[i].get_time_now().get_real_secs()
             print "current time 2 = %.7f" %current_time
             #print "base_s_time = %.7f" %start_time
