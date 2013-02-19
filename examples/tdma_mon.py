@@ -208,7 +208,7 @@ class my_top_block(gr.top_block):
         # configuration the usrp sensors and transmitters
         # Automatically USRP devices discovery
         self.devices = uhd.find_devices_raw()
-        self.n_devices = len(devices)
+        self.n_devices = len(self.devices)
         self.addrs = []
         
         if (self.n_devices == 0):
