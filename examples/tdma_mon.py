@@ -198,7 +198,7 @@ class my_top_block(gr.top_block):
         
         if(self._node_type == CLUSTER_NODE):
             self.setup_tdma_engines()
-            self.setup_packet_framers(self)
+            self.setup_packet_framers()
             self.setup_bpsk_mods()
             self.setup_multiply_consts()
             self.setup_burst_gates()
