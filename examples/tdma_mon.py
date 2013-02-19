@@ -152,7 +152,7 @@ class my_top_block(gr.top_block):
         if self._node_type == CLUSTER_HEAD:
             #self._socket_ctrl_chan._sock_client._socket.sendto("message from cluster head\n", ('<broadcast>', NODE_PORT))
             hostname = socket.gethostname()
-            current_time = self.sensors[0].u.get_time_now().get_real_secs()
+            current_time = self.rcvs[0].u.get_time_now().get_real_secs()
             print "cluster head current time %.7f" %current_time
             start_time = struct.pack('!d', current_time + 10)        
             burst_duration = struct.pack('!d', BURST_LEN)
@@ -162,6 +162,9 @@ class my_top_block(gr.top_block):
             #print hostname
             #self._socket_ctrl_chan._sock_client._socket.sendto(hostname, ('<broadcast>', NODE_PORT))
             self._socket_ctrl_chan._sock_client._socket.sendto(payload, ('<broadcast>', NODE_PORT))
+
+            self.rcvs[0].set_start_time(uhd.time_spec_t(start_time))
+            self.rcvs[0].start()
         else:  # CLUSTER_NODE will be responsible for tdma transmitting and receiving
             if DEBUG == 1:
                 stime = self.sensors[0].u.get_time_now().get_real_secs()
@@ -192,15 +195,20 @@ class my_top_block(gr.top_block):
         #setup the flowgraphs
         self.find_all_devices()
         self.setup_usrp_sources()
-        self.setup_tdma_engines()
-        self.setup_packet_framers(self)
-        self.setup_bpsk_mods()
-        self.setup_multiply_consts()
-        self.setup_burst_gates()
-        self.setup_usrp_sinks()
-        self.setup_bpsk_demods()
-        self.setup_packet_deframers()
-        self.make_all_connections()
+        
+        if(self._node_type == CLUSTER_NODE):
+            self.setup_tdma_engines()
+            self.setup_packet_framers(self)
+            self.setup_bpsk_mods()
+            self.setup_multiply_consts()
+            self.setup_burst_gates()
+            self.setup_usrp_sinks()
+            self.setup_bpsk_demods()
+            self.setup_packet_deframers()
+            self.make_all_connections()
+        elif(self._node_type == CLUSTER_HEAD):
+            self.filesink = gr.file_sink(gr.sizeof_gr_complex, "file.dat")
+            self.connect((self.rcvs[0], 0), self.filesink)
 
         self.timer =  threading.Timer(1, self.start_streaming)
     
@@ -270,10 +278,10 @@ class my_top_block(gr.top_block):
             initial_slot = NODES_PC*self._node_id + i
             number_of_slots = NETWORK_SIZE
             self.tdmaegns.append(precog.tdma_engine(initial_slot,
-                                                    options.slot_interval,
-                                                    options.guard_interval,
-                                                    options.number_of_slots,
-                                                    options.lead_limit,
+                                                    0.010,#options.slot_interval,
+                                                    0.002,#options.guard_interval,
+                                                    number_of_slots,#options.number_of_slots,
+                                                    0.020,#options.lead_limit,
                                                     options.link_rate))
     
     def setup_packet_framers(self):
