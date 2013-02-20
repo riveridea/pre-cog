@@ -76,8 +76,8 @@ class packet_framer(gr.block):
         self.keep = False
 
     def work(self, input_items, output_items):
+        print ' packet_framer:work()'
         while not len(self._pkt):
-            print ' packet_framer:work()'
             try: msg = self.pop_msg_queue()
             except: return -1
             print ' packet_framer:get a message'
