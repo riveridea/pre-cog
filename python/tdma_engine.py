@@ -147,7 +147,7 @@ class tdma_engine(gr.block):
             more_frames = 0
             tx_object = time_object,data,more_frames
             self.post_msg(TO_FRAMER_PORT,pmt.pmt_string_to_symbol('full'),pmt.from_python(tx_object),pmt.pmt_string_to_symbol('tdma'))
-            print 'tx_frames:post message from the pad data'
+            #print 'tx_frames:post message from the pad data'
         else:
             #print frame_count,self.queue.qsize(), self.tx_queue.qsize()
             #send first frame w tuple for tx_time and number of frames to put in slot

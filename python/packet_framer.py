@@ -77,8 +77,10 @@ class packet_framer(gr.block):
 
     def work(self, input_items, output_items):
         while not len(self._pkt):
+            print ' packet_framer:work()'
             try: msg = self.pop_msg_queue()
             except: return -1
+            print ' packet_framer:get a message'
             if not pmt.pmt_is_blob(msg.value): 
                 self.tx_time,data,self.more_frame_cnt = pmt.to_python(msg.value)
                 self.has_tx_time = True
