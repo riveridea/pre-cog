@@ -271,10 +271,8 @@ class my_top_block(gr.top_block):
         print 'setup_packet_deframers'
         self.pktdfrms = []
         for i in range(self.n_devices):
-            self.pktdfrms.append(gr_extras.packet_framer(samples_per_symbol=1,
-		                                          bits_per_symbol=1,
-		                                          access_code="",
-		                                         ))
+            self.pktfrms.append(gr_extras.packet_deframer(access_code="",
+                                                          threshold=-1,))
     
     def setup_tdma_engines(self):
         print ' setup_tdma_engines'
@@ -294,8 +292,10 @@ class my_top_block(gr.top_block):
         print ' setup_packet_framers'
         self.pktfrms = []
         for i in range(self.n_devices):
-            self.pktfrms.append(gr_extras.packet_deframer(access_code="",
-                                                          threshold=-1,))
+            self.pktdfrms.append(gr_extras.packet_framer(samples_per_symbol=1,
+		                                          bits_per_symbol=1,
+		                                          access_code="",
+		                                         ))
     
     def setup_bpsk_demods(self):
         print 'setup_bpsk_demods'
