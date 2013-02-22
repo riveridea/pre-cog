@@ -164,7 +164,7 @@ class my_top_block(gr.top_block):
             #self._socket_ctrl_chan._sock_client._socket.sendto(hostname, ('<broadcast>', NODE_PORT))
             self._socket_ctrl_chan._sock_client._socket.sendto(payload, ('<broadcast>', NODE_PORT))
 
-            self.rcvs[0].set_start_time(uhd.time_spec_t(start_time_v))
+            #self.rcvs[0].set_start_time(uhd.time_spec_t(start_time_v))
             self.rcvs[0].start()
         else:  # CLUSTER_NODE will be responsible for tdma transmitting and receiving
             if DEBUG == 1:
