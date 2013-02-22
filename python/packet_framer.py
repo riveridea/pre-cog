@@ -85,7 +85,7 @@ class packet_framer(gr.block):
                 self.tx_time,data,self.more_frame_cnt = pmt.to_python(msg.value)
                 self.has_tx_time = True
                 print data
-                print tx_time
+                print self.tx_time
                 print data.tostring()
             else:
                 data = pmt.pmt_blob_data(msg.value)
