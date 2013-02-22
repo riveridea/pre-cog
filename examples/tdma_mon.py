@@ -244,8 +244,9 @@ class my_top_block(gr.top_block):
 				                         channels=range(1),
 			                                 ),
 			                    )
-			    )			    
-            self.rcvs[i].set_start_on_demand()  # the sensor will start sensing onmand												
+			    )
+            if(self._node_type == CLUSTER_NODE):			    
+                self.rcvs[i].set_start_on_demand()  # the sensor will start sensing onmand												
             if self.rcvs[i].get_time_source(0) == "none":
                 self.rcvs[i].set_time_source("mimo", 0)  # Set the time source without GPS to MIMO cable
                 self.rcvs[i].set_clock_source("mimo",0)
