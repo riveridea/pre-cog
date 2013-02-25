@@ -103,7 +103,8 @@ class tdma_engine(gr.block):
         self.has_old_msg = False
         self.overhead = 15
         #self.pad_data = numpy.fromstring('this idsaf;lkjkfdjsd;lfjs;lkajskljf;klajdsfk',dtype='uint8')
-        self.pad_data = (self.bytes_per_slot) * chr(0xD3)
+        pad_d = (self.bytes_per_slot) * chr(0xD3)
+        self.pad_data  = numpy.fromstring(pad_d, dtype='uint8')
         self.tx_slots_passed = 0
     
     def tx_frames(self):
