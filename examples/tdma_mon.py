@@ -265,7 +265,7 @@ class my_top_block(gr.top_block):
 		                                     samples_per_symbol=2,
 		                                     excess_bw=0.35,
 		                                     verbose=False,
-		                                     log=True,
+		                                     log=False,
 		                                    ))
     
     def setup_packet_deframers(self):
@@ -310,7 +310,7 @@ class my_top_block(gr.top_block):
 		                                         timing_bw=6.28/100.0,
 		                                         mod_code="gray",
 		                                         verbose=False,
-		                                         log=False,))
+		                                         log=True,))
     
     def setup_multiply_consts(self):
         print 'setup_multiply_consts'
