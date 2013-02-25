@@ -102,7 +102,7 @@ class packet_framer(gr.block):
                 self._whitener_offset,
                 )
             self._pkt = numpy.fromstring(pkt, numpy.uint8)
-            print pkt
+            print len(pkt)
             if self._use_whitener_offset:
                 self._whitener_offset = (self._whitener_offset + 1) % 16
 
