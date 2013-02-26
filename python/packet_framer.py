@@ -81,7 +81,7 @@ class packet_framer(gr.block):
         while not len(self._pkt):
             try: msg = self.pop_msg_queue()
             except: return -1
-            print ' packet_framer:get a message'
+            #print ' packet_framer:get a message'
             if not pmt.pmt_is_blob(msg.value): 
                 self.tx_time,data,self.more_frame_cnt = pmt.to_python(msg.value)
                 self.has_tx_time = True
@@ -210,6 +210,7 @@ class _queue_to_blob(gr.block):
             try: msg = self._msgq.delete_head()
             except: return -1
             ok, payload = packet_utils.unmake_packet(msg.to_string(), int(msg.arg1()))
+            print 'pkt deframer get a payload'
             self.display_pkt_stats(self, payload, ok)
             if ok:
                 payload = numpy.fromstring(payload, numpy.uint8)
