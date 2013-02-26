@@ -104,7 +104,7 @@ class tdma_engine(gr.block):
         self.has_old_msg = False
         self.overhead = 15
         #self.pad_data = numpy.fromstring('this idsaf;lkjkfdjsd;lfjs;lkajskljf;klajdsfk',dtype='uint8')
-        self.pkt_no = 0
+        self.pktno = 0
 
         self.tx_slots_passed = 0
     
