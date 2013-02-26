@@ -211,7 +211,7 @@ class _queue_to_blob(gr.block):
             except: return -1
             ok, payload = packet_utils.unmake_packet(msg.to_string(), int(msg.arg1()))
             print 'pkt deframer get a payload'
-            self.display_pkt_stats(self, payload, ok)
+            self.display_pkt_stats(payload, ok)
             if ok:
                 payload = numpy.fromstring(payload, numpy.uint8)
                 try: blob = self._mgr.acquire(True) #block
