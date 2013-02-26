@@ -285,7 +285,7 @@ class my_top_block(gr.top_block):
                                                     0.050,#options.slot_interval,
                                                     0.010,#options.guard_interval,
                                                     number_of_slots,#options.number_of_slots,
-                                                    0.010,#options.lead_limit,
+                                                    0.020,#options.lead_limit,
                                                     self.link_rate))
             print ' appended a tdma engine'
     
