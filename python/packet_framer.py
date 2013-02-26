@@ -220,7 +220,7 @@ class _queue_to_blob(gr.block):
             else:
                 a = 0
 
-    def display_pkt_stats(self, payload, ok)
+    def display_pkt_stats(self, payload, ok):
         global n_rcvd, n_right
         (self.pktno,) = struct.unpack('!H', payload[0:2])
         n_rcvd += 1
