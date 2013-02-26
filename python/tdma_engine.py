@@ -103,8 +103,8 @@ class tdma_engine(gr.block):
         self.has_old_msg = False
         self.overhead = 15
         #self.pad_data = numpy.fromstring('this idsaf;lkjkfdjsd;lfjs;lkajskljf;klajdsfk',dtype='uint8')
-        pad_d = (self.bytes_per_slot - 20) * chr(0xD3)
-        self.pad_data  = numpy.fromstring(pad_d, dtype='uint8')
+        self.pkt_no = 0
+
         self.tx_slots_passed = 0
     
     def tx_frames(self):
@@ -144,10 +144,13 @@ class tdma_engine(gr.block):
         #if no data, send a single pad frame
         #TODO: add useful pad data, i.e. current time of SDR
         if frame_count == 0:
-            data = self.pad_data
+            pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 22) * chr(self.pktno & 0xff)
+            data  = numpy.fromstring(pad_d, dtype='uint8')
+            #data = self.pad_data
             more_frames = 0
             tx_object = time_object,data,more_frames
             self.post_msg(TO_FRAMER_PORT,pmt.pmt_string_to_symbol('full'),pmt.from_python(tx_object),pmt.pmt_string_to_symbol('tdma'))
+            self.pktno += 1
             #print 'tx_frames:post message from the pad data'
         else:
             #print frame_count,self.queue.qsize(), self.tx_queue.qsize()

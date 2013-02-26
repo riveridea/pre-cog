@@ -203,11 +203,13 @@ class _queue_to_blob(gr.block):
         for i in range(64):
             self._mgr.set(pmt.pmt_make_blob(10000))
 
+
     def work(self, input_items, output_items):
         while True:
             try: msg = self._msgq.delete_head()
             except: return -1
             ok, payload = packet_utils.unmake_packet(msg.to_string(), int(msg.arg1()))
+            self.display_pkt_stats(self, payload, ok)
             if ok:
                 payload = numpy.fromstring(payload, numpy.uint8)
                 try: blob = self._mgr.acquire(True) #block
@@ -218,3 +220,12 @@ class _queue_to_blob(gr.block):
             else:
                 a = 0
 
+    def display_pkt_stats(self, payload, ok)
+        global n_rcvd, n_right
+        (self.pktno,) = struct.unpack('!H', payload[0:2])
+        n_rcvd += 1
+        if ok:
+            n_right += 1
+
+        print "ok = %5s  pktno = %4d  n_rcvd = %4d  n_right = %4d" % (
+            ok, self.pktno, n_rcvd, n_right)
