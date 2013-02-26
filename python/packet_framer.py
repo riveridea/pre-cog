@@ -20,6 +20,7 @@
 # 
 
 import numpy
+import struct
 from math import pi
 from gnuradio import gr
 from gruel import pmt
@@ -76,7 +77,7 @@ class packet_framer(gr.block):
         self.keep = False
 
     def work(self, input_items, output_items):
-        print ' packet_framer:work()'
+        #print ' packet_framer:work()'
         while not len(self._pkt):
             try: msg = self.pop_msg_queue()
             except: return -1
@@ -85,7 +86,7 @@ class packet_framer(gr.block):
                 self.tx_time,data,self.more_frame_cnt = pmt.to_python(msg.value)
                 self.has_tx_time = True
                 #print data
-                print self.tx_time
+                #print self.tx_time
                 #print data.tostring()
             else:
                 data = pmt.pmt_blob_data(msg.value)
@@ -102,7 +103,7 @@ class packet_framer(gr.block):
                 self._whitener_offset,
                 )
             self._pkt = numpy.fromstring(pkt, numpy.uint8)
-            print len(pkt)
+            #print len(pkt)
             if self._use_whitener_offset:
                 self._whitener_offset = (self._whitener_offset + 1) % 16
 

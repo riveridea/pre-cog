@@ -30,6 +30,7 @@ from gnuradio.extras import extras_swig
 import Queue
 import time
 import math
+import struct
 
 BROADCAST_ADDR = 255
 
