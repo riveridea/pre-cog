@@ -145,7 +145,7 @@ class tdma_engine(gr.block):
         #if no data, send a single pad frame
         #TODO: add useful pad data, i.e. current time of SDR
         if frame_count == 0:
-            pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 22) * chr(self.pktno & 0xff)
+            pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
             data  = numpy.fromstring(pad_d, dtype='uint8')
             #data = self.pad_data
             more_frames = 0
