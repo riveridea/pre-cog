@@ -259,8 +259,8 @@ class my_top_block(gr.top_block):
         print 'setup_bpsk_mods'
         self.bpskmods = []
         for i in range(self.n_devices):
-            self.bpskmods.append(digital.psk.psk_mod(samples_per_symbol=2,
-                                                     log=True))
+            self.bpskmods.append(digital.bpsk.bpsk_mod(samples_per_symbol=2,
+                                                       log=True))
     
     def setup_packet_deframers(self):
         print 'setup_packet_deframers'
