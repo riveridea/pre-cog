@@ -259,20 +259,13 @@ class my_top_block(gr.top_block):
         print 'setup_bpsk_mods'
         self.bpskmods = []
         for i in range(self.n_devices):
-            self.bpskmods.append(digital.psk.psk_mod(constellation_points=2,
-		                                     mod_code="none",
-		                                     differential=False,
-		                                     samples_per_symbol=2,
-		                                     excess_bw=0.35,
-		                                     verbose=False,
-		                                     log=False,
-		                                    ))
+            self.bpskmods.append(digital.psk.psk_mod())
     
     def setup_packet_deframers(self):
         print 'setup_packet_deframers'
         self.pktdfrms = []
         for i in range(self.n_devices):
-            self.pktdfrms.append(precog.packet_deframer(access_code="",
+            self.pktdfrms.append(precog.packet_deframer(access_code=None,
                                                           threshold=-1,))
     
     def setup_tdma_engines(self):
@@ -292,24 +285,16 @@ class my_top_block(gr.top_block):
         print ' setup_packet_framers'
         self.pktfrms = []
         for i in range(self.n_devices):
-            self.pktfrms.append(precog.packet_framer(samples_per_symbol=1,
+            self.pktfrms.append(precog.packet_framer(samples_per_symbol=2,
 		                                        bits_per_symbol=1,
-		                                        access_code="",
+		                                        access_code=None,
 		                                       ))
     
     def setup_bpsk_demods(self):
         print 'setup_bpsk_demods'
         self.bpskdemods = []
         for i in range(self.n_devices):
-            self.bpskdemods.append(digital.psk.psk_demod(constellation_points=2,
-		                                         differential=True,
-		                                         samples_per_symbol=2,
-		                                         excess_bw=0.35,
-		                                         phase_bw=6.28/100.0,
-		                                         timing_bw=6.28/100.0,
-		                                         mod_code="gray",
-		                                         verbose=False,
-		                                         log=True,))
+            self.bpskdemods.append(digital.bpsk.bpsk_demod())
     
     def setup_multiply_consts(self):
         print 'setup_multiply_consts'
