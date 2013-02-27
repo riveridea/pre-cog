@@ -259,7 +259,8 @@ class my_top_block(gr.top_block):
         print 'setup_bpsk_mods'
         self.bpskmods = []
         for i in range(self.n_devices):
-            self.bpskmods.append(digital.psk.psk_mod(log=True))
+            self.bpskmods.append(digital.psk.psk_mod(samples_per_symbol=2,
+                                                     log=True))
     
     def setup_packet_deframers(self):
         print 'setup_packet_deframers'
@@ -294,7 +295,8 @@ class my_top_block(gr.top_block):
         print 'setup_bpsk_demods'
         self.bpskdemods = []
         for i in range(self.n_devices):
-            self.bpskdemods.append(digital.bpsk.bpsk_demod(log=True))
+            self.bpskdemods.append(digital.bpsk.bpsk_demod(samples_per_symbol=2,
+                                                           log=True))
     
     def setup_multiply_consts(self):
         print 'setup_multiply_consts'
