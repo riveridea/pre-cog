@@ -99,7 +99,7 @@ class packet_framer(gr.block):
                 self._samples_per_symbol,
                 self._bits_per_symbol,
                 self._access_code,
-                False, #pad_for_usrp,
+                True, #pad_for_usrp,
                 self._whitener_offset,
                 )
             self._pkt = numpy.fromstring(pkt, numpy.uint8)
