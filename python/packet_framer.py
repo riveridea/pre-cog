@@ -199,6 +199,8 @@ class _queue_to_blob(gr.block):
             in_sig = None, out_sig = None,
             num_msg_outputs = 1
         )
+        self.n_rcvd = 0
+        self.n_right = 0
         self._msgq = msgq
         self._mgr = pmt.pmt_mgr()
         for i in range(64):
@@ -223,11 +225,10 @@ class _queue_to_blob(gr.block):
                 a = 0
 
     def display_pkt_stats(self, payload, ok):
-        global n_rcvd, n_right
         (self.pktno,) = struct.unpack('!H', payload[0:2])
-        n_rcvd += 1
+        self.n_rcvd += 1
         if ok:
-            n_right += 1
+            self.n_right += 1
 
         print "ok = %5s  pktno = %4d  n_rcvd = %4d  n_right = %4d" % (
-            ok, self.pktno, n_rcvd, n_right)
+            ok, self.pktno, self.n_rcvd, self.n_right)
