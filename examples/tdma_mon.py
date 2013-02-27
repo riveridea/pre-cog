@@ -253,13 +253,13 @@ class my_top_block(gr.top_block):
             self.rcvs[i].set_samp_rate(self.sample_rate)
 	    self.rcvs[i].set_center_freq(self.center_freq, 0)
 	    self.rcvs[i].set_gain(self.rx_gain, 0)
-	    self.rcvs[i].set_antenna("RX2", 0)        
+	    self.rcvs[i].set_antenna("TX/RX", 0)        
     
     def setup_bpsk_mods(self):
         print 'setup_bpsk_mods'
         self.bpskmods = []
         for i in range(self.n_devices):
-            self.bpskmods.append(digital.psk.psk_mod())
+            self.bpskmods.append(digital.psk.psk_mod(log=True))
     
     def setup_packet_deframers(self):
         print 'setup_packet_deframers'
@@ -294,7 +294,7 @@ class my_top_block(gr.top_block):
         print 'setup_bpsk_demods'
         self.bpskdemods = []
         for i in range(self.n_devices):
-            self.bpskdemods.append(digital.bpsk.bpsk_demod())
+            self.bpskdemods.append(digital.bpsk.bpsk_demod(log=True))
     
     def setup_multiply_consts(self):
         print 'setup_multiply_consts'
