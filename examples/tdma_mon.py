@@ -200,11 +200,13 @@ class my_top_block(gr.top_block):
         if(self._node_type == CLUSTER_NODE):
             self.setup_tdma_engines()
             self.setup_packet_framers()
-            self.setup_bpsk_mods()
+            #self.setup_bpsk_mods()
+            self.setup_gmsk_mods()
             self.setup_multiply_consts()
             self.setup_burst_gates()
             self.setup_usrp_sinks()
-            self.setup_bpsk_demods()
+            #self.setup_bpsk_demods()
+            self.setup_gmsk_demods()
             self.setup_packet_deframers()
             self.make_all_connections()
         elif(self._node_type == CLUSTER_HEAD):
@@ -261,7 +263,16 @@ class my_top_block(gr.top_block):
         for i in range(self.n_devices):
             self.bpskmods.append(digital.bpsk.bpsk_mod(samples_per_symbol=2,
                                                        log=True))
-    
+    def setup_gmsk_mods(self):
+        self.mods = []
+        for i in range(self.n_devices):
+            self.mods.append(digital.gmsk_mod(
+			samples_per_symbol=2,
+			bt=0.35,
+			verbose=False,
+			log=False,
+		)   
+ 
     def setup_packet_deframers(self):
         print 'setup_packet_deframers'
         self.pktdfrms = []
@@ -298,6 +309,19 @@ class my_top_block(gr.top_block):
             self.bpskdemods.append(digital.bpsk.bpsk_demod(samples_per_symbol=2,
                                                            log=True))
     
+    def setup_gmsk_demods(self):
+       self.demods = []
+       for i in range(self.n_devices):
+           self.demods.append(digital.gmsk_demod(
+			samples_per_symbol=2,
+			gain_mu=0.175,
+			mu=0.5,
+			omega_relative_limit=0.005,
+			freq_error=0.0,
+			verbose=False,
+			log=False,
+		        ))
+
     def setup_multiply_consts(self):
         print 'setup_multiply_consts'
         self.mlts = []
@@ -332,13 +356,17 @@ class my_top_block(gr.top_block):
             # Trasnmitting Path
             self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
             self.connect((self.tdmaegns[i], 0), (self.pktfrms[i], 0))
-            self.connect((self.pktfrms[i], 0), (self.bpskmods[i], 0))
-            self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
+            #self.connect((self.pktfrms[i], 0), (self.bpskmods[i], 0))
+            self.connect((self.pktfrms[i], 0), (self.mods[i], 0))
+            #self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
+            self.connect((self.mods[i], 0), (self.mlts[i], 0))
             self.connect((self.mlts[i], 0), (self.bstgts[i], 0))
             self.connect((self.bstgts[i], 0), (self.sinks[i], 0))
             # Receiving Path
-            self.connect((self.rcvs[i], 0), (self.bpskdemods[i], 0))
-            self.connect((self.bpskdemods[i], 0), (self.pktdfrms[i], 0))
+            #self.connect((self.rcvs[i], 0), (self.bpskdemods[i], 0))
+            self.connect((self.rcvs[i], 0), (self.demods[i], 0))
+            #self.connect((self.bpskdemods[i], 0), (self.pktdfrms[i], 0))
+            self.connect((self.demods[i], 0), (self.pktdfrms[i], 0))
             self.connect((self.pktdfrms[i], 0), (self.tdmaegns[i], 2))
             
 	
@@ -432,6 +460,7 @@ def main():
                       help="specify the tx gain for the USRP")                  					  
     parser.add_option("", "--rx-gain", type="eng_float", default=None,
                       help="specify the rx gain for the USRP")    
+    parser.add_option("-m", "--mod")
 					  
     for mod in demods.values():
         mod.add_options(expert_grp)
