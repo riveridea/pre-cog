@@ -271,7 +271,7 @@ class my_top_block(gr.top_block):
 			bt=0.35,
 			verbose=False,
 			log=False,
-		)   
+		))   
  
     def setup_packet_deframers(self):
         print 'setup_packet_deframers'
