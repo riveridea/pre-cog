@@ -196,6 +196,9 @@ class my_top_block(gr.top_block):
         # tx_only and rx_only 
         if options.tx_only and options.rx_only:
             sys.exit("System can not act as both tx only and rx only")
+        else:
+            self.tx_only = options.tx_only
+            self.rx_only = options.rx_only
 
         #setup the flowgraphs
         self.find_all_devices()
@@ -261,7 +264,8 @@ class my_top_block(gr.top_block):
                 self.rcvs[i].set_clock_source("mimo",0)
             self.rcvs[i].set_samp_rate(self.sample_rate)
 	    self.rcvs[i].set_center_freq(self.center_freq, 0)
-	    self.rcvs[i].set_gain(self.rx_gain, 0)
+            if(self.tx_gain):
+	        self.rcvs[i].set_gain(self.rx_gain, 0)
 	    self.rcvs[i].set_antenna("TX/RX", 0)        
     
     def setup_bpsk_mods(self):
@@ -361,7 +365,7 @@ class my_top_block(gr.top_block):
         print 'make all connections'
         for i in range(self.n_devices):
             # Trasnmitting Path
-            if options.rx_only == False:
+            if self.rx_only == False:
                 self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
                 self.connect((self.tdmaegns[i], 0), (self.pktfrms[i], 0))
                 #self.connect((self.pktfrms[i], 0), (self.bpskmods[i], 0))
@@ -371,7 +375,7 @@ class my_top_block(gr.top_block):
                 self.connect((self.mlts[i], 0), (self.bstgts[i], 0))
                 self.connect((self.bstgts[i], 0), (self.sinks[i], 0))
             # Receiving Path
-            if options.tx_only == False:
+            if self.tx_only == False:
                 #self.connect((self.rcvs[i], 0), (self.bpskdemods[i], 0))
                 self.connect((self.rcvs[i], 0), (self.demods[i], 0))
                 #self.connect((self.bpskdemods[i], 0), (self.pktdfrms[i], 0))
