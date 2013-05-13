@@ -273,6 +273,7 @@ class my_top_block(gr.top_block):
         self.bpskmods = []
         for i in range(self.n_devices):
             self.bpskmods.append(digital.bpsk.bpsk_mod(samples_per_symbol=2,
+                                                       differential=True,
                                                        log=False))
     def setup_gmsk_mods(self):
         self.mods = []
@@ -299,7 +300,7 @@ class my_top_block(gr.top_block):
             number_of_slots = NETWORK_SIZE
             self.tdmaegns.append(precog.tdma_engine(initial_slot,
                                                     0.050,#options.slot_interval,
-                                                    0.00,#options.guard_interval,
+                                                    0.010,#options.guard_interval,
                                                     1,    #number_of_slots,#options.number_of_slots,
                                                     0.005,#options.lead_limit,
                                                     self.link_rate))
@@ -318,6 +319,7 @@ class my_top_block(gr.top_block):
         self.bpskdemods = []
         for i in range(self.n_devices):
             self.bpskdemods.append(digital.bpsk.bpsk_demod(samples_per_symbol=2,
+                                                           differential=True,
                                                            log=True))
     
     def setup_gmsk_demods(self):
