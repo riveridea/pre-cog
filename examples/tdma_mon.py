@@ -383,7 +383,7 @@ class my_top_block(gr.top_block):
                     self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
                 elif self.mod_type == "gmsk":
                     self.connect((self.pktfrms[i], 0), (self.mods[i], 0))
-                     self.connect((self.mods[i], 0), (self.mlts[i], 0))
+                    self.connect((self.mods[i], 0), (self.mlts[i], 0))
                 self.connect((self.mlts[i], 0), (self.bstgts[i], 0))
                 self.connect((self.bstgts[i], 0), (self.sinks[i], 0))
             # Receiving Path
