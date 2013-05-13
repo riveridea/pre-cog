@@ -281,7 +281,7 @@ class my_top_block(gr.top_block):
         self.bpskmods = []
         for i in range(self.n_devices):
             self.bpskmods.append(digital.bpsk.bpsk_mod(samples_per_symbol=2,
-                                                       self.diff,
+                                                       differential=self.diff,
                                                        log=False))
     def setup_gmsk_mods(self):
         self.mods = []
@@ -327,7 +327,7 @@ class my_top_block(gr.top_block):
         self.bpskdemods = []
         for i in range(self.n_devices):
             self.bpskdemods.append(digital.bpsk.bpsk_demod(samples_per_symbol=2,
-                                                           self.diff,
+                                                           differential=self.diff,
                                                            log=True))
     
     def setup_gmsk_demods(self):
