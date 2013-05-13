@@ -380,7 +380,7 @@ class my_top_block(gr.top_block):
                 #self.connect((self.rcvs[i], 0), (self.demods[i], 0))
                 self.connect((self.bpskdemods[i], 0), (self.pktdfrms[i], 0))
                 #self.connect((self.demods[i], 0), (self.pktdfrms[i], 0))
-                self.connect((self.pktdfrms[i], 0), (self.tdmaegns[i], 2))
+                #self.connect((self.pktdfrms[i], 0), (self.tdmaegns[i], 2))
             
 	
     def start_tdma_net(self, start_time, burst_duration, idle_duration):
@@ -409,7 +409,8 @@ class my_top_block(gr.top_block):
             #print "base_s_time = %.7f" %start_time
             self.rcvs[i].start()
             #start the transmitting of data packets
-            self.sinks[i].start()
+            if self.rx_only == False:
+                self.sinks[i].start()
 
 # /////////////////////////////////////////////////////////////////////////////
 #                                   main
