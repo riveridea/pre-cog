@@ -368,18 +368,18 @@ class my_top_block(gr.top_block):
             if self.rx_only == False:
                 self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
                 self.connect((self.tdmaegns[i], 0), (self.pktfrms[i], 0))
-                #self.connect((self.pktfrms[i], 0), (self.bpskmods[i], 0))
-                self.connect((self.pktfrms[i], 0), (self.mods[i], 0))
-                #self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
-                self.connect((self.mods[i], 0), (self.mlts[i], 0))
+                self.connect((self.pktfrms[i], 0), (self.bpskmods[i], 0))
+                #self.connect((self.pktfrms[i], 0), (self.mods[i], 0))
+                self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
+                #self.connect((self.mods[i], 0), (self.mlts[i], 0))
                 self.connect((self.mlts[i], 0), (self.bstgts[i], 0))
                 self.connect((self.bstgts[i], 0), (self.sinks[i], 0))
             # Receiving Path
             if self.tx_only == False:
-                #self.connect((self.rcvs[i], 0), (self.bpskdemods[i], 0))
-                self.connect((self.rcvs[i], 0), (self.demods[i], 0))
-                #self.connect((self.bpskdemods[i], 0), (self.pktdfrms[i], 0))
-                self.connect((self.demods[i], 0), (self.pktdfrms[i], 0))
+                self.connect((self.rcvs[i], 0), (self.bpskdemods[i], 0))
+                #self.connect((self.rcvs[i], 0), (self.demods[i], 0))
+                self.connect((self.bpskdemods[i], 0), (self.pktdfrms[i], 0))
+                #self.connect((self.demods[i], 0), (self.pktdfrms[i], 0))
                 self.connect((self.pktdfrms[i], 0), (self.tdmaegns[i], 2))
             
 	
