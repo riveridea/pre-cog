@@ -298,10 +298,10 @@ class my_top_block(gr.top_block):
             initial_slot = NODES_PC*self._node_id + i
             number_of_slots = NETWORK_SIZE
             self.tdmaegns.append(precog.tdma_engine(initial_slot,
-                                                    0.050,#options.slot_interval,
+                                                    0.030,#options.slot_interval,
                                                     0.000,#options.guard_interval,
                                                     1,    #number_of_slots,#options.number_of_slots,
-                                                    0.000,#options.lead_limit,
+                                                    0.001,#options.lead_limit,
                                                     self.link_rate))
     
     def setup_packet_framers(self):
