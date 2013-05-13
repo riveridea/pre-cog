@@ -193,7 +193,7 @@ class my_top_block(gr.top_block):
         self.rx_gain = options.rx_gain
         self.tx_gain = options.tx_gain
 
-        self.diff = optinons.diff
+        self.diff = options.diff
 
         # tx_only and rx_only 
         if options.tx_only and options.rx_only:
