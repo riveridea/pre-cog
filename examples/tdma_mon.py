@@ -264,7 +264,7 @@ class my_top_block(gr.top_block):
                 self.rcvs[i].set_clock_source("mimo",0)
             self.rcvs[i].set_samp_rate(self.sample_rate)
 	    self.rcvs[i].set_center_freq(self.center_freq, 0)
-            if(self.tx_gain):
+            if(self.rx_gain):
 	        self.rcvs[i].set_gain(self.rx_gain, 0)
 	    self.rcvs[i].set_antenna("TX/RX", 0)        
     
