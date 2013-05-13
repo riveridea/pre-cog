@@ -193,6 +193,8 @@ class my_top_block(gr.top_block):
         self.rx_gain = options.rx_gain
         self.tx_gain = options.tx_gain
 
+        self.diff = optinons.diff
+
         # tx_only and rx_only 
         if options.tx_only and options.rx_only:
             sys.exit("System can not act as both tx only and rx only")
@@ -205,17 +207,23 @@ class my_top_block(gr.top_block):
         self.setup_usrp_sources()
         
         if(self._node_type == CLUSTER_NODE):
+            self.mod_type = options.mods_type
+             
             if options.rx_only == False:
                 self.setup_tdma_engines()
                 self.setup_packet_framers()
-                self.setup_bpsk_mods()
-                #self.setup_gmsk_mods()
+                if self.mod_type == "bpsk":
+                    self.setup_bpsk_mods()
+                elif self.mod_type == "gmsk":
+                    self.setup_gmsk_mods()
                 self.setup_multiply_consts()
                 self.setup_burst_gates()
                 self.setup_usrp_sinks()
             if options.tx_only == False:
-                self.setup_bpsk_demods()
-                #self.setup_gmsk_demods()
+                if self.mod_type == "bpsk":
+                    self.setup_bpsk_demods()
+                elif self.mod_type == "gmsk":
+                    self.setup_gmsk_demods()
                 self.setup_packet_deframers()
 
             self.make_all_connections()
@@ -273,7 +281,7 @@ class my_top_block(gr.top_block):
         self.bpskmods = []
         for i in range(self.n_devices):
             self.bpskmods.append(digital.bpsk.bpsk_mod(samples_per_symbol=2,
-                                                       differential=True,
+                                                       self.diff,
                                                        log=False))
     def setup_gmsk_mods(self):
         self.mods = []
@@ -319,7 +327,7 @@ class my_top_block(gr.top_block):
         self.bpskdemods = []
         for i in range(self.n_devices):
             self.bpskdemods.append(digital.bpsk.bpsk_demod(samples_per_symbol=2,
-                                                           differential=True,
+                                                           self.diff,
                                                            log=True))
     
     def setup_gmsk_demods(self):
@@ -370,18 +378,22 @@ class my_top_block(gr.top_block):
             if self.rx_only == False:
                 self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
                 self.connect((self.tdmaegns[i], 0), (self.pktfrms[i], 0))
-                self.connect((self.pktfrms[i], 0), (self.bpskmods[i], 0))
-                #self.connect((self.pktfrms[i], 0), (self.mods[i], 0))
-                self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
-                #self.connect((self.mods[i], 0), (self.mlts[i], 0))
+                if self.mod_type == "bpsk":
+                    self.connect((self.pktfrms[i], 0), (self.bpskmods[i], 0))
+                    self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
+                elif self.mod_type == "gmsk":
+                    self.connect((self.pktfrms[i], 0), (self.mods[i], 0))
+                     self.connect((self.mods[i], 0), (self.mlts[i], 0))
                 self.connect((self.mlts[i], 0), (self.bstgts[i], 0))
                 self.connect((self.bstgts[i], 0), (self.sinks[i], 0))
             # Receiving Path
             if self.tx_only == False:
-                self.connect((self.rcvs[i], 0), (self.bpskdemods[i], 0))
-                #self.connect((self.rcvs[i], 0), (self.demods[i], 0))
-                self.connect((self.bpskdemods[i], 0), (self.pktdfrms[i], 0))
-                #self.connect((self.demods[i], 0), (self.pktdfrms[i], 0))
+                if self.mod_type == "bpsk":
+                    self.connect((self.rcvs[i], 0), (self.bpskdemods[i], 0))
+                    self.connect((self.bpskdemods[i], 0), (self.pktdfrms[i], 0))
+                elif self.mod_type == "gmsk":
+                    self.connect((self.rcvs[i], 0), (self.demods[i], 0))
+                    self.connect((self.demods[i], 0), (self.pktdfrms[i], 0))
                 #self.connect((self.pktdfrms[i], 0), (self.tdmaegns[i], 2))
             
 	
@@ -429,6 +441,10 @@ def main():
     node_types = {}
     node_types["head"] = "head"
     node_types["node"] = "node"	
+
+    mods = {}
+    mods_types["gmsk"] = "gmsk"
+    mods_types["bpsk"] = "bpsk"
  
     def rx_callback(ok, payload):
         global n_rcvd, n_right
@@ -476,7 +492,12 @@ def main():
                       help="specify the tx gain for the USRP")                  					  
     parser.add_option("", "--rx-gain", type="eng_float", default=None,
                       help="specify the rx gain for the USRP")    
-    parser.add_option("-m", "--mod")
+    parser.add_option("-m", "--mod-type", type="choice", choices=mods.keys(),
+                            default="gmsk",
+                            help="Select the modulation scheme from: %s [default=%%default]"
+                                 % (', '.join(mods.keys()),))
+    parser.add_option("","--diff", action="store_true", default=False,
+                      help="specify if the bpsk is differential or not")
 
     ################################
     # Options for network variants
