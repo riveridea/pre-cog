@@ -299,7 +299,7 @@ class my_top_block(gr.top_block):
             number_of_slots = NETWORK_SIZE
             self.tdmaegns.append(precog.tdma_engine(initial_slot,
                                                     0.050,#options.slot_interval,
-                                                    0.005,#options.guard_interval,
+                                                    0.00,#options.guard_interval,
                                                     1,    #number_of_slots,#options.number_of_slots,
                                                     0.005,#options.lead_limit,
                                                     self.link_rate))
