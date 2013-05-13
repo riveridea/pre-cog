@@ -443,8 +443,8 @@ def main():
     node_types["node"] = "node"	
 
     mods = {}
-    mods_types["gmsk"] = "gmsk"
-    mods_types["bpsk"] = "bpsk"
+    mods["gmsk"] = "gmsk"
+    mods["bpsk"] = "bpsk"
  
     def rx_callback(ok, payload):
         global n_rcvd, n_right
