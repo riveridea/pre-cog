@@ -208,14 +208,14 @@ class my_top_block(gr.top_block):
             if options.rx_only == False:
                 self.setup_tdma_engines()
                 self.setup_packet_framers()
-                #self.setup_bpsk_mods()
-                self.setup_gmsk_mods()
+                self.setup_bpsk_mods()
+                #self.setup_gmsk_mods()
                 self.setup_multiply_consts()
                 self.setup_burst_gates()
                 self.setup_usrp_sinks()
             if options.tx_only == False:
-                #self.setup_bpsk_demods()
-                self.setup_gmsk_demods()
+                self.setup_bpsk_demods()
+                #self.setup_gmsk_demods()
                 self.setup_packet_deframers()
 
             self.make_all_connections()
