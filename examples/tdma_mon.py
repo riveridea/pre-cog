@@ -207,7 +207,7 @@ class my_top_block(gr.top_block):
         self.setup_usrp_sources()
         
         if(self._node_type == CLUSTER_NODE):
-            self.mod_type = options.mods_type
+            self.mod_type = options.mod_type
              
             if options.rx_only == False:
                 self.setup_tdma_engines()
