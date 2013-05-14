@@ -176,7 +176,7 @@ class packet_deframer(gr.hier_block2):
         if threshold == -1:
             threshold = 12              # FIXME raise exception
 
-        msgq = gr.msg_queue()          # holds packets from the PHY
+        msgq = gr.msg_queue(0)          # holds packets from the PHY
         self.correlator = gr_digital.correlate_access_code_bb(access_code, threshold)
 
         self.framer_sink = gr.framer_sink_1(msgq)
