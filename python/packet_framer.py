@@ -212,7 +212,7 @@ class _queue_to_blob(gr.block):
             try: msg = self._msgq.delete_head()
             except: return -1
             ok, payload = packet_utils.unmake_packet(msg.to_string(), int(msg.arg1()))
-            print 'pkt deframer get a payload'
+            #print 'pkt deframer get a payload'
             self.display_pkt_stats(payload, ok)
             if ok:
                 payload = numpy.fromstring(payload, numpy.uint8)
