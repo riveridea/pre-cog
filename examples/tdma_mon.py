@@ -347,7 +347,7 @@ class my_top_block(gr.top_block):
         print 'setup_multiply_consts'
         self.mlts = []
         for i in range(self.n_devices):
-            self.mlts.append(gr.multiply_const_vcc((0.7, )))
+            self.mlts.append(gr.multiply_const_vcc((1, )))
     
     def setup_burst_gates(self):
         print 'setup_burst_gates'
