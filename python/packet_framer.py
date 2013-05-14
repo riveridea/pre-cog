@@ -220,7 +220,7 @@ class _queue_to_blob(gr.block):
                 except: return -1
                 pmt.pmt_blob_resize(blob, len(payload))
                 pmt.pmt_blob_rw_data(blob)[:] = payload
-                self.post_msg(0, pmt.pmt_string_to_symbol("ok"), blob)
+                #self.post_msg(0, pmt.pmt_string_to_symbol("ok"), blob)
             else:
                 a = 0
 
