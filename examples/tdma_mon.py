@@ -274,7 +274,7 @@ class my_top_block(gr.top_block):
 	    self.rcvs[i].set_center_freq(self.center_freq, 0)
             if(self.rx_gain):
 	        self.rcvs[i].set_gain(self.rx_gain, 0)
-	    self.rcvs[i].set_antenna("TX/RX", 0)        
+	    self.rcvs[i].set_antenna("RX2", 0)        
     
     def setup_bpsk_mods(self):
         print 'setup_bpsk_mods'
