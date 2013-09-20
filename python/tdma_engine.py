@@ -149,9 +149,9 @@ class tdma_engine(gr.block):
         if frame_count == 0:
             #pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
             pad_d = pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
-            #data  = numpy.fromstring(pad_d, dtype='uint8')
+            data  = numpy.fromstring(pad_d, dtype='uint8')
             #data = self.pad_data
-            data = pad_d
+            #data = pad_d
             more_frames = 0
             tx_object = time_object,data,more_frames
             self.post_msg(TO_FRAMER_PORT,pmt.pmt_string_to_symbol('full'),pmt.from_python(tx_object),pmt.pmt_string_to_symbol('tdma'))
