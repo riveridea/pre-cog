@@ -47,6 +47,8 @@ CTRL_PORT = 1
 LOOKING_FOR_TIME = 0 
 HAVE_TIME = 0
 
+pn511_0 = '\x80\x44\x64\x75\x6C\x71\x2A\x36\x7C\xF1\x6E\x52\x09\x9D\x1F\x78\x3F\xE1\xEE\x16\x6D\xE8\x73\x09\x15\xD7\x92\xE7\x03\xBA\x7A\x94\x0A\xAF\xAD\x06\xED\xAC\x17\x7C\x79\xA6\xB8\xD1\x7F\x4B\x14\xC6\x03\x32\xB2\x7E\xD2\x4D\xF9\x6A\x14\x4E\xCB\xD8\x6A\x9C\x86\x20'
+
 
 # /////////////////////////////////////////////////////////////////////////////
 #                   TDMA MAC
@@ -145,9 +147,11 @@ class tdma_engine(gr.block):
         #if no data, send a single pad frame
         #TODO: add useful pad data, i.e. current time of SDR
         if frame_count == 0:
-            pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
-            data  = numpy.fromstring(pad_d, dtype='uint8')
+            #pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
+            pad_d = pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
+            #data  = numpy.fromstring(pad_d, dtype='uint8')
             #data = self.pad_data
+            data = pad_d
             more_frames = 0
             tx_object = time_object,data,more_frames
             self.post_msg(TO_FRAMER_PORT,pmt.pmt_string_to_symbol('full'),pmt.from_python(tx_object),pmt.pmt_string_to_symbol('tdma'))
