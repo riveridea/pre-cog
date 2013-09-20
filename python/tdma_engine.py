@@ -49,6 +49,8 @@ HAVE_TIME = 0
 
 pn511_0 = '\x80\x44\x64\x75\x6C\x71\x2A\x36\x7C\xF1\x6E\x52\x09\x9D\x1F\x78\x3F\xE1\xEE\x16\x6D\xE8\x73\x09\x15\xD7\x92\xE7\x03\xBA\x7A\x94\x0A\xAF\xAD\x06\xED\xAC\x17\x7C\x79\xA6\xB8\xD1\x7F\x4B\x14\xC6\x03\x32\xB2\x7E\xD2\x4D\xF9\x6A\x14\x4E\xCB\xD8\x6A\x9C\x86\x20'
 
+pn511_1 = '\x82\x67\x47\xDE\x0F\xF8\x7B\x85\x9B\x7A\x1C\xC2\x45\x75\xE4\xB9\xC0\xEE\x9E\xA5\x02\xAB\xEB\x41\xBB\x6B\x05\xDF\x1E\x69\xAE\x34\x5F\xD2\xC5\x31\x80\xCC\xAC\x9F\xB4\x93\x7E\x5A\x85\x13\xB2\xF6\x1A\xA7\x21\x88\x40\x22\x32\x3A\xB6\x38\x95\x1B\x3E\x78\xB7\x28'
+
 
 # /////////////////////////////////////////////////////////////////////////////
 #                   TDMA MAC
@@ -148,7 +150,10 @@ class tdma_engine(gr.block):
         #TODO: add useful pad data, i.e. current time of SDR
         if frame_count == 0:
             #pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
-            pad_d = pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
+            if self.initial_slot == 1:
+                pad_d = pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
+            else:
+                pad_d = pn511_1
             data  = numpy.fromstring(pad_d, dtype='uint8')
             #data = self.pad_data
             #data = pad_d

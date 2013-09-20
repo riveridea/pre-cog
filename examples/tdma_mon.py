@@ -53,7 +53,7 @@ NETWORK_SIZE = 4  # the number of all the USRPs
 MTU = 4096
 
 BURST_LEN = 0.008  #burst duration = 8ms
-NODES_PC  = 2
+NODES_PC  = 1
 
 CLUSTER_HEAD    = 'head'   # cluster head
 CLUSTER_NODE    = 'node'   # cluster node
@@ -309,7 +309,7 @@ class my_top_block(gr.top_block):
             self.tdmaegns.append(precog.tdma_engine(initial_slot,
                                                     0.050,#options.slot_interval,
                                                     0.010,#options.guard_interval,
-                                                    4,    #number_of_slots,#options.number_of_slots,
+                                                    2,    #number_of_slots,#options.number_of_slots,
                                                     0.005,#options.lead_limit,
                                                     self.link_rate))
     
