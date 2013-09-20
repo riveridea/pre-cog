@@ -151,9 +151,9 @@ class tdma_engine(gr.block):
         if frame_count == 0:
             #pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
             if self.initial_slot == 1:
-                pad_d = pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
+                pad_d = 16*pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
             else:
-                pad_d = pn511_1
+                pad_d = 16*pn511_0
             data  = numpy.fromstring(pad_d, dtype='uint8')
             #data = self.pad_data
             #data = pad_d
