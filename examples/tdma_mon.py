@@ -309,7 +309,7 @@ class my_top_block(gr.top_block):
             self.tdmaegns.append(precog.tdma_engine(initial_slot,
                                                     0.050,#options.slot_interval,
                                                     0.010,#options.guard_interval,
-                                                    5,    #number_of_slots,#options.number_of_slots,
+                                                    4,    #number_of_slots,#options.number_of_slots,
                                                     0.005,#options.lead_limit,
                                                     self.link_rate))
     
