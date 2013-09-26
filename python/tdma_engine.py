@@ -153,7 +153,7 @@ class tdma_engine(gr.block):
             if self.initial_slot == 1:
                 pad_d = 16*pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
             else:
-                pad_d = 16*pn511_0
+                pad_d = 16*pn511_1
             data  = numpy.fromstring(pad_d, dtype='uint8')
             #data = self.pad_data
             #data = pad_d
