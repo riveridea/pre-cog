@@ -109,6 +109,7 @@ class tdma_engine(gr.block):
         self.overhead = 15
         #self.pad_data = numpy.fromstring('this idsaf;lkjkfdjsd;lfjs;lkajskljf;klajdsfk',dtype='uint8')
         self.pktno = 0
+        self.sfile = open('./big_buck_bunny.mp4', 'r')
 
         self.tx_slots_passed = 0
     
@@ -150,10 +151,15 @@ class tdma_engine(gr.block):
         #TODO: add useful pad data, i.e. current time of SDR
         if frame_count == 0:
             #pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
-            if self.initial_slot == 0:
-                pad_d = 16*pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
+            rdata = self.sfile.read(self.bytes_per_slot - 100)
+            if len(rdata) > 0:
+                pad_d = pn511_0 + rdata
             else:
-                pad_d = 16*pn511_1
+                pad_d = pn511_1
+            #if self.initial_slot == 0:
+            #    pad_d = 16*pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
+            #else:
+            #    pad_d = 16*pn511_1
             data  = numpy.fromstring(pad_d, dtype='uint8')
             #data = self.pad_data
             #data = pad_d
