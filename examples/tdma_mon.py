@@ -329,7 +329,7 @@ class my_top_block(gr.top_block):
         for i in range(self.n_devices):
             self.bpskdemods.append(digital.bpsk.bpsk_demod(samples_per_symbol=2,
                                                            differential=self.diff,
-                                                           log=True))
+                                                           log=True, addr=self.addrs[i]))
     
     def setup_gmsk_demods(self):
        self.demods = []
