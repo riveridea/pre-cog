@@ -295,7 +295,7 @@ class my_top_block(gr.top_block):
                 addr_t = self.devices[i].to_string()  #ex. 'type=usrp2,addr=192.168.10.109,name=,serial=E6R14U3UP'
                 usrpaddr = addr_t[11:30]
                 pos = hostaddrs.find(usrpaddr)
-                if pos != -1
+                if pos != -1:
                     self.addrs[pos/19] = usrpaddr # suppose the addr is 192.168.10.xxx, put the addr to the currect index of self.addrs
                 else:
                     sys.exit('incorrect USPR configuration')
