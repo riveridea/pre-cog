@@ -299,8 +299,8 @@ class my_top_block(gr.top_block):
                     self.addrs[pos/19] = usrpaddr # suppose the addr is 192.168.10.xxx, put the addr to the currect index of self.addrs
                 else:
                     sys.exit('incorrect USPR configuration')
-        self.addrs
-        hostaddrs
+        print self.addrs
+        print hostaddrs
                 
         #if (self.n_devices == 1 and self._node_type == CLUSTER_NODE):
             #sys.exit("only one devices for the node, we need both communicator and sensor for cluster node")
