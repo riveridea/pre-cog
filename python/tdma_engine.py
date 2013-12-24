@@ -109,7 +109,7 @@ class tdma_engine(gr.block):
         self.overhead = 15
         #self.pad_data = numpy.fromstring('this idsaf;lkjkfdjsd;lfjs;lkajskljf;klajdsfk',dtype='uint8')
         self.pktno = 0
-        self.sfile = open('./big_buck_bunny.mp4', 'r')
+        #self.sfile = open('./big_buck_bunny.mp4', 'r')
 
         self.tx_slots_passed = 0
     
