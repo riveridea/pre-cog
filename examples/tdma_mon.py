@@ -58,8 +58,15 @@ NODES_PC  = 1
 CLUSTER_HEAD    = 'head'   # cluster head
 CLUSTER_NODE    = 'node'   # cluster node
 
+HOSTADDR_PREFIX     = '149.149.90.'
+HOSTADDR_BASE       = 134 #the host IP address for cri-node-1
+HOSTNAME_PREFIX     = 'cri-node-'
+
+USRPADDR_PREFIX     = '192.168.'
+
 HEAD_PORT = 23000   # port where cluster head capturing the socket message
 NODE_PORT = 23001   # port where cluster node capturing the socket message
+
 
 # thread for getting transmitted data from file or orther source
 class tx_data_src(threading.Thread):
@@ -239,14 +246,61 @@ class my_top_block(gr.top_block):
         self.devices = uhd.find_devices_raw()
         self.n_devices = len(self.devices)
         self.addrs = []
+
+	# Organize the devices in the addrs[] based on the USRP configuration
+        # Get host address
+        hostname = socket.gethostname() 
+        if hostname.find('cri-node-') == 0:
+            host_id     = int(hostname[9:])
+            host_addr   = HOSTADDR_BASE + host_id - 1 
+            host_addr_s = HOSTADDR_PREFIX  + str(host_addr)
+        else:
+            sys.exit("host name of computer is not correct")
+        # Read the USRPs configuration entry for this host
+        cfgfile = open('./usrp_config', 'r')
+        line = cfgfile.readline()
+        hostaddrs = ''
+        while line:
+            pos1 = line.find(host_addr_s) #host addr start point
+            if pos1 == -1: 
+                line = cfgfile.readline()
+                continue
+            print line[0:]
+            curr = pos1 + len(host_addr_s)
+            prev = curr
+            while True:
+                shift = line[curr:].find(USRPADDR_PREFIX)
+                if shift != -1:
+                    prev = curr + shift
+                    shift = line[prev:].find(' ')
+                    if shift == -1:
+                        shift = line[prev:].find('\n')
+                    curr = prev + shift
+                    hostaddrs = hostaddrs +'addr='+line[prev:curr]
+                else:
+                   break
+            
+            break
+           
+        cfgfile.close() 
+
         
         if (self.n_devices == 0):
             sys.exit("no connected devices")
         elif (self.n_devices >= 1):
             for i in range(self.n_devices):
+                self.addrs.append('') #initiliaze the addr table
+
+            for i in range(self.n_devices):
                 addr_t = self.devices[i].to_string()  #ex. 'type=usrp2,addr=192.168.10.109,name=,serial=E6R14U3UP'
-                self.addrs.append(addr_t[11:30]) # suppose the addr is 192.168.10.xxx
-                self.addrs[i]
+                usrpaddr = addr_t[11:30]
+                pos = hostaddrs.find(usrpaddr)
+                if pos != -1
+                    self.addrs[pos/19] = usrpaddr # suppose the addr is 192.168.10.xxx, put the addr to the currect index of self.addrs
+                else:
+                    sys.exit('incorrect USPR configuration')
+        self.addrs
+        hostaddrs
                 
         #if (self.n_devices == 1 and self._node_type == CLUSTER_NODE):
             #sys.exit("only one devices for the node, we need both communicator and sensor for cluster node")
