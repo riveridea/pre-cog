@@ -325,8 +325,8 @@ class my_top_block(gr.top_block):
                 self.rcvs[i].set_time_source("mimo", 0)  # Set the time source without GPS to MIMO cable
                 self.rcvs[i].set_clock_source("mimo",0)
             self.rcvs[i].set_samp_rate(self.sample_rate)
-	    #self.rcvs[i].set_center_freq(self.center_freq, 0)
-            self.rcvs[i].set_center_freq(uhd.tune_request(self.center_freq, self.sample_rate*12), 0)
+	    self.rcvs[i].set_center_freq(self.center_freq, 0)
+            #self.rcvs[i].set_center_freq(uhd.tune_request(self.center_freq, self.sample_rate*12), 0)
             if(self.rx_gain):
 	        self.rcvs[i].set_gain(self.rx_gain, 0)
 	    self.rcvs[i].set_antenna("RX2", 0)        
