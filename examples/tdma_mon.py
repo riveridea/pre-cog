@@ -201,6 +201,7 @@ class my_top_block(gr.top_block):
         self.tx_gain = options.tx_gain
 
         self.diff = options.diff
+        self.randbinfile = options.rand_file
 
         # tx_only and rx_only 
         if options.tx_only and options.rx_only:
@@ -426,6 +427,13 @@ class my_top_block(gr.top_block):
             if(self.tx_gain):
 	        self.sinks[i].set_gain(self.tx_gain, 0)
 	    self.sinks[i].set_antenna("TX/RX", 0)
+
+            #generate the random datafile for the transmitter if read data from file
+            if self.randbinfile == True:
+                txfile_name = '/home/alexzh/' + self.addrs[i] + '_randtx'
+                with open(txfile_name, 'wb') as fout:
+                    fout.write(os.urandom(8388608))  #generate a file of 8M random data
+            
     
     def make_all_connections(self):
         print 'make all connections'
@@ -527,6 +535,8 @@ def main():
                       help="set packet size [default=%default]")
     parser.add_option("","--from-file", default=None,
                       help="input file of samples to demod")
+    parser.add_option("","--rand-file", action="store_true", default=False,
+                      help="specify yes or no if a random binary data file will be used for the USRP transmitter")
 
     parser.add_option("", "--node-type", type="choice", choices=node_types.keys(),
                           default="node",
