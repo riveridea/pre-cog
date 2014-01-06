@@ -113,7 +113,7 @@ class tdma_engine(gr.block):
         self.pktno = 0
 
         if self.from_file
-            txfile_name = '/home/alexzh/' + self.addrs[i] + '_randtx'
+            txfile_name = '/home/alexzh/' + self.tx_addr + '_randtx'
             self.sfile = open(txfile_name, 'r')
         
         self.tx_slots_passed = 0
