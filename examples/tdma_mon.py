@@ -39,8 +39,8 @@ from ctypes import *
 
 # socket 
 import socket
+import os
 
-#import os
 #print os.getpid()
 #raw_input('Attach and press enter: ')
 
