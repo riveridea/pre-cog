@@ -61,7 +61,7 @@ class tdma_engine(gr.block):
     TDMA implementation.  See wiki for more details
     """
     def __init__(
-        self,initial_slot,slot_interval,guard_interval,num_slots,lead_limit,link_bps
+        self,initial_slot,slot_interval,guard_interval,num_slots,lead_limit,link_bps,tx_addr,from_file
     ):
         """
         Inputs: complex stream from USRP, pkt in, ctrl in
@@ -87,6 +87,8 @@ class tdma_engine(gr.block):
         self.num_slots = num_slots
         self.lead_limit = lead_limit
         self.link_bps = link_bps
+	self.tx_addr = tx_addr
+        self.from_file = from_file
         
         self.bytes_per_slot = int( ( self.slot_interval - self.guard_interval ) * self.link_bps / 8 )
         
@@ -109,8 +111,11 @@ class tdma_engine(gr.block):
         self.overhead = 15
         #self.pad_data = numpy.fromstring('this idsaf;lkjkfdjsd;lfjs;lkajskljf;klajdsfk',dtype='uint8')
         self.pktno = 0
-        #self.sfile = open('./big_buck_bunny.mp4', 'r')
 
+        if self.from_file
+            txfile_name = '/home/alexzh/' + self.addrs[i] + '_randtx'
+            self.sfile = open(txfile_name, 'r')
+        
         self.tx_slots_passed = 0
     
     def tx_frames(self):
@@ -151,15 +156,15 @@ class tdma_engine(gr.block):
         #TODO: add useful pad data, i.e. current time of SDR
         if frame_count == 0:
             #pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
-            #rdata = self.sfile.read(self.bytes_per_slot - 100)
-            #if len(rdata) > 0:
-            #    pad_d = pn511_0 + rdata
-            #else:
-            #    pad_d = pn511_1
-            if self.initial_slot == 0:
-                pad_d = 16*pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
+            if self.from_file and self.sfile != 0:
+                rdata = self.sfile.read(self.bytes_per_slot - 100)
+                if len(rdata) > 0:
+                    pad_d = rdata
             else:
-                pad_d = 16*pn511_1
+                if self.initial_slot == 0:
+                    pad_d = 16*pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
+                else:
+                    pad_d = 16*pn511_1
             data  = numpy.fromstring(pad_d, dtype='uint8')
             #data = self.pad_data
             #data = pad_d
