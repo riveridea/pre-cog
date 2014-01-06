@@ -368,7 +368,9 @@ class my_top_block(gr.top_block):
                                                     0.010,#options.guard_interval,
                                                     70,    #number_of_slots,#options.number_of_slots,
                                                     0.005,#options.lead_limit,
-                                                    self.link_rate))
+                                                    self.link_rate,
+                                                    self.addrs[i],
+                                                    self.randbinfile))
     
     def setup_packet_framers(self):
         print ' setup_packet_framers'
