@@ -112,7 +112,7 @@ class tdma_engine(gr.block):
         #self.pad_data = numpy.fromstring('this idsaf;lkjkfdjsd;lfjs;lkajskljf;klajdsfk',dtype='uint8')
         self.pktno = 0
 
-        if self.from_file
+        if self.from_file:
             txfile_name = '/home/alexzh/' + self.tx_addr + '_randtx'
             self.sfile = open(txfile_name, 'r')
         
