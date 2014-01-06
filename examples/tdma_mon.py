@@ -218,6 +218,7 @@ class my_top_block(gr.top_block):
             self.mod_type = options.mod_type
              
             if options.rx_only == False:
+                self.setup_usrp_sinks()
                 self.setup_tdma_engines()
                 self.setup_packet_framers()
                 if self.mod_type == "bpsk":
@@ -226,7 +227,7 @@ class my_top_block(gr.top_block):
                     self.setup_gmsk_mods()
                 self.setup_multiply_consts()
                 self.setup_burst_gates()
-                self.setup_usrp_sinks()
+
             if options.tx_only == False:
                 if self.mod_type == "bpsk":
                     self.setup_bpsk_demods()
