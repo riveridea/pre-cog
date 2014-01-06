@@ -361,17 +361,28 @@ class my_top_block(gr.top_block):
         print ' setup_tdma_engines'
         self.tdmaegns = []
         for i in range(self.n_devices):
-            initial_slot = NODES_PC*self._node_id + i
-            print ' initial slot = %d' %(initial_slot)
-            number_of_slots = NETWORK_SIZE
-            self.tdmaegns.append(precog.tdma_engine(initial_slot,
-                                                    0.100,#options.slot_interval,
-                                                    0.010,#options.guard_interval,
-                                                    70,    #number_of_slots,#options.number_of_slots,
-                                                    0.005,#options.lead_limit,
-                                                    self.link_rate,
-                                                    self.addrs[i],
-                                                    self.randbinfile))
+            if self.tx_only == False:
+                initial_slot = NODES_PC*self._node_id + i
+                print ' initial slot = %d' %(initial_slot)
+                number_of_slots = NETWORK_SIZE
+                self.tdmaegns.append(precog.tdma_engine(initial_slot,
+                                                        0.100,#options.slot_interval,
+                                                        0.010,#options.guard_interval,
+                                                        70,    #number_of_slots,#options.number_of_slots,
+                                                        0.005,#options.lead_limit,
+                                                        self.link_rate,
+                                                        self.addrs[i],
+                                                        self.randbinfile))
+            else:
+                # if tx_only == True, all the transmitter will transmitt simuletaneously and continuously.
+                self.tdmaegns.append(precog.tdma_engine(initial_slot,
+                                                        0.100,#options.slot_interval,
+                                                        0.0,#options.guard_interval,
+                                                        1,    #number_of_slots,#options.number_of_slots,
+                                                        0.005,#options.lead_limit,
+                                                        self.link_rate,
+                                                        self.addrs[i],
+                                                        self.randbinfile))                
     
     def setup_packet_framers(self):
         print ' setup_packet_framers'
