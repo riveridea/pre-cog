@@ -375,7 +375,7 @@ class my_top_block(gr.top_block):
                                                         self.randbinfile))
             else:
                 # if tx_only == True, all the transmitter will transmitt simuletaneously and continuously.
-                self.tdmaegns.append(precog.tdma_engine(initial_slot,
+                self.tdmaegns.append(precog.tdma_engine(0,
                                                         0.100,#options.slot_interval,
                                                         0.0,#options.guard_interval,
                                                         1,    #number_of_slots,#options.number_of_slots,
