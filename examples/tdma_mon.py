@@ -361,9 +361,9 @@ class my_top_block(gr.top_block):
         print ' setup_tdma_engines'
         self.tdmaegns = []
         for i in range(self.n_devices):
+            initial_slot = NODES_PC*self._node_id + i
+            print ' initial slot = %d' %(initial_slot)
             if self.tx_only == False:
-                initial_slot = NODES_PC*self._node_id + i
-                print ' initial slot = %d' %(initial_slot)
                 number_of_slots = NETWORK_SIZE
                 self.tdmaegns.append(precog.tdma_engine(initial_slot,
                                                         0.100,#options.slot_interval,
