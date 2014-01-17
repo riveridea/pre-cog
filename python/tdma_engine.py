@@ -165,7 +165,7 @@ class tdma_engine(gr.block):
         #TODO: add useful pad data, i.e. current time of SDR
         if frame_count == 0:
             #pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
-            prefix = ''
+            prefix = '\x00\x00\x00\x00'
             for i in range(self.prefix_len):
                 if i == self.prefix_loc:
                     seg = pn511s[i] #put the PN code to the prefix
@@ -189,7 +189,7 @@ class tdma_engine(gr.block):
                     pad_d = 16*pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
                 else:
                     pad_d = 16*pn511_1
-            pad_d = prefix + pad_d
+            pad_d = prefix + '\x00\x00\x00\x00' + pad_d
 
             data  = numpy.fromstring(pad_d, dtype='uint8')
             #data = self.pad_data
