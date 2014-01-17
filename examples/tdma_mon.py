@@ -372,17 +372,19 @@ class my_top_block(gr.top_block):
                                                         0.005,#options.lead_limit,
                                                         self.link_rate,
                                                         self.addrs[i],
-                                                        self.randbinfile))
+                                                        self.randbinfile,
+                                                        False))
             else:
                 # if tx_only == True, all the transmitter will transmitt simuletaneously and continuously.
-                self.tdmaegns.append(precog.tdma_engine(1,
+                self.tdmaegns.append(precog.tdma_engine(initial_slot,
                                                         0.100,#options.slot_interval,
                                                         0.0,#options.guard_interval,
                                                         1,    #number_of_slots,#options.number_of_slots,
                                                         0.000,#options.lead_limit,
                                                         self.link_rate,
                                                         self.addrs[i],
-                                                        self.randbinfile))                
+                                                        self.randbinfile,
+                                                        True))                
     
     def setup_packet_framers(self):
         print ' setup_packet_framers'
@@ -445,9 +447,14 @@ class my_top_block(gr.top_block):
             #generate the random datafile for the transmitter if read data from file
             if self.randbinfile == True:
                 txfile_name = '/home/alexzh/' + self.addrs[i] + '_randtx'
-                with open(txfile_name, 'wb') as fout:
-                    fout.write(os.urandom(8388608))  #generate a file of 8M random data
-            
+                try:
+                    with open(txfile_name, 'r'):
+                        source_file = open(txfile_name, 'r')
+                except IOError:
+                    with open(txfile_name, 'wb') as fout:
+                        print 'Generating Random binary file.... waiting'
+                        fout.write(os.urandom(1280000000))  #generate a file of 8M random data
+                        print '1.28G random binary file genearted'            
     
     def make_all_connections(self):
         print 'make all connections'
