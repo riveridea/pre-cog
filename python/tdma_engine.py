@@ -82,13 +82,15 @@ class tdma_engine(gr.block):
             self.mgr.set(pmt.pmt_make_blob(10000))
         
         self.initial_slot = initial_slot
+        self.num_slots = num_slots
         self.prefix_loc = 0
+        self.prefix_len = 1
         if mimo == True:
             self.prefix_loc = initial_slot
+            self.prefix_len = 2 # number of PNs
             self.initial_slot = 1
         self.slot_interval = slot_interval
         self.guard_interval = guard_interval
-        self.num_slots = num_slots
         self.lead_limit = lead_limit
         self.link_bps = link_bps
 	self.tx_addr = tx_addr
@@ -161,7 +163,7 @@ class tdma_engine(gr.block):
         if frame_count == 0:
             #pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
             prefix = ''
-            for i in range(self.num_slots):
+            for i in range(self.prefix_len):
                 if i == self.prefix_loc:
                     seg = pn511_0 #put the PN code to the prefix
                 else:
