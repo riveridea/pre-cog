@@ -177,9 +177,6 @@ class tdma_engine(gr.block):
                 # N+1 := prefix_loc
                 prefix = prefix + seg
 
-                print prefix
-                print '\n'
-
             if self.from_file and self.sfile != 0:
                 rdata = self.sfile.read(self.bytes_per_slot - 100)
                 if len(rdata) > 0:
@@ -196,6 +193,10 @@ class tdma_engine(gr.block):
             #data = pad_d
             more_frames = 0
             tx_object = time_object,data,more_frames
+
+            print 'prefix_loc = %d' self.prefix_loc
+            print 'antenna_start = %7f' self.antenna_start
+
             self.post_msg(TO_FRAMER_PORT,pmt.pmt_string_to_symbol('full'),pmt.from_python(tx_object),pmt.pmt_string_to_symbol('tdma'))
             self.pktno += 1
             #print 'tx_frames:post message from the pad data'
