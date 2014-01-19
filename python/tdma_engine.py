@@ -195,7 +195,7 @@ class tdma_engine(gr.block):
             tx_object = time_object,data,more_frames
 
             print 'prefix_loc = %d' %(self.prefix_loc)
-            print 'antenna_start = %7f' %(self.antenna_start)
+            print 'antenna_start = %.7f' %(self.antenna_start)
 
             self.post_msg(TO_FRAMER_PORT,pmt.pmt_string_to_symbol('full'),pmt.from_python(tx_object),pmt.pmt_string_to_symbol('tdma'))
             self.pktno += 1
