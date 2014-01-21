@@ -444,6 +444,9 @@ class my_top_block(gr.top_block):
 	        self.sinks[i].set_gain(self.tx_gain, 0)
 	    self.sinks[i].set_antenna("TX/RX", 0)
 
+            if self.sinks[i].get_time_source(0) == "none":
+                self.sinks[i].set_time_source("mimo", 0)  # Set the time source without GPS to MIMO cable
+                self.sinks[i].set_clock_source("mimo",0)
             #generate the random datafile for the transmitter if read data from file
             if self.randbinfile == True:
                 txfile_name = '/home/alexzh/' + self.addrs[i] + '_randtx'
