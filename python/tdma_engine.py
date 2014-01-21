@@ -179,7 +179,7 @@ class tdma_engine(gr.block):
                 prefix = prefix + seg
 
             if self.from_file and self.sfile != 0:
-                rdata = self.sfile.read(self.bytes_per_slot - 100)
+                rdata = self.sfile.read(self.bytes_per_slot - 128*self.prefix_len -100)
                 if len(rdata) > 0:
                     pad_d = rdata
             else:
