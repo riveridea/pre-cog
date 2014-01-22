@@ -372,6 +372,7 @@ class my_top_block(gr.top_block):
             #initial_slot = NODES_PC*self._node_id + i
             initial_slot = self.node_slot_start + i 
             print ' initial slot = %d' %(initial_slot)
+            print self.addrs[i]
             if self.tx_only == False:
                 number_of_slots = NETWORK_SIZE
                 self.tdmaegns.append(precog.tdma_engine(initial_slot,
