@@ -195,7 +195,7 @@ class tdma_engine(gr.block):
             pad_d = prefix + pad_d
  
             #send PN and data at different slots for MIMO
-            postmag = True
+            postmsg = True
             if self.mimo == True:       
                 postmsg = True
                 if self.pktno % 3 == self.prefix_loc:
