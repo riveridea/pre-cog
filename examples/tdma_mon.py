@@ -380,7 +380,7 @@ class my_top_block(gr.top_block):
                                                         0.100,#options.slot_interval,
                                                         0.010,#options.guard_interval,
                                                         1,    #number_of_slots,#options.number_of_slots,
-                                                        0.000,#options.lead_limit,
+                                                        0.005,#options.lead_limit,
                                                         self.link_rate,
                                                         self.addrs[i],
                                                         self.randbinfile,
