@@ -192,9 +192,9 @@ class tdma_engine(gr.block):
  
             #send PN and data at different slots for MIMO
             postmsg = True
-            if self.pktno%3 == self.prefix_loc:
-                pad_d == 16*pn511_0
-            elif self.pktno%3 == 2:
+            if self.pktno % 3 == self.prefix_loc:
+                pad_d = pn511_0
+            elif self.pktno % 3 == 2:
                 pad_d = rdata
             else:
                 postmsg = False
