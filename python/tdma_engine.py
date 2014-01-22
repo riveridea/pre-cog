@@ -51,7 +51,7 @@ pn511_0 = '\x82\x5B\x8E\x63\xE0\xAA\xCA\xE8\xD5\x1D\x26\x8A\xD4\xFC\x6D\x0B\xBD\
 
 pn511_1 = '\x82\x04\xC4\xF7\xA8\x39\xE3\x87\x97\xB1\x96\x2B\x6A\xA5\xB9\x85\x38\xB4\x05\x5E\x0B\x26\xEA\xC3\x06\xA6\x8C\x7C\x25\x12\x44\x5C\x69\x5D\x3E\xDF\xF7\x65\x47\xA4\xEE\x07\xF1\x0E\xB5\x9F\xA2\x85\xF5\xCA\x42\x37\x9B\x66\x72\x5D\xF3\xA1\xB0\x0C\xD7\xE4\x76\x98'
 
-pn511s = [pn511_0, pn511_0]
+pn511s = [pn511_0, pn511_1]
 
 
 # /////////////////////////////////////////////////////////////////////////////
@@ -87,6 +87,7 @@ class tdma_engine(gr.block):
         self.num_slots = num_slots
         self.prefix_loc = 0
         self.prefix_len = 1
+        self.mimo = mimo
         if mimo == True:
             self.prefix_loc = initial_slot
             print 'prefix_loc = %d' %(self.prefix_loc)
@@ -165,18 +166,21 @@ class tdma_engine(gr.block):
         #TODO: add useful pad data, i.e. current time of SDR
         if frame_count == 0:
             #pad_d = struct.pack('!H', self.pktno & 0xffff) + (self.bytes_per_slot - 100) * chr(self.pktno & 0xff)
-            zeros = 64*chr(0x00)
-            prefix = ''
-            for i in range(self.prefix_len):
-                if i == self.prefix_loc:
-                    seg = zeros + pn511s[i]  #put the PN code to the prefix
-                else:
-                    seg = 128*chr(0x00)
+            #zeros = 64*chr(0x00)
+            if self.initial_slot == 0:
+                prefix = pn511s[0]
+            else:
+                prefix = pn511s[1]
+            #for i in range(self.prefix_len):
+            #    if i == self.prefix_loc:
+            #        seg = zeros + pn511s[i]  #put the PN code to the prefix
+            #    else:
+            #        seg = 128*chr(0x00)
                 # the prefix looks like  0000000...0000PPPPPP...PPPP0000000.....000000
                 #                        |___512bit_||____512bit_||___M*1024bit_____|
                 # M+N+1 := num_slots
                 # N+1 := prefix_loc
-                prefix = prefix + seg
+            #    prefix = prefix + seg
 
             rdata = ''
             if self.from_file and self.sfile != 0:
@@ -188,16 +192,18 @@ class tdma_engine(gr.block):
                     pad_d = 16*pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
                 else:
                     pad_d = 16*pn511_1
-            pad_d = prefix + '\x00\x00\x00\x00' + pad_d
+            pad_d = prefix + pad_d
  
             #send PN and data at different slots for MIMO
-            postmsg = True
-            if self.pktno % 3 == self.prefix_loc:
-                pad_d = pn511_0
-            elif self.pktno % 3 == 2:
-                pad_d = rdata
-            else:
-                postmsg = False
+            postmag = True
+            if self.mimo == True:       
+                postmsg = True
+                if self.pktno % 3 == self.prefix_loc:
+                    pad_d = pn511_0
+                elif self.pktno % 3 == 2:
+                    pad_d = rdata
+                else:
+                    postmsg = False
                 
 
             data  = numpy.fromstring(pad_d, dtype='uint8')

@@ -67,6 +67,8 @@ USRPADDR_PREFIX     = '192.168.'
 HEAD_PORT = 23000   # port where cluster head capturing the socket message
 NODE_PORT = 23001   # port where cluster node capturing the socket message
 
+NODE_SLOT = 'node_slot_start='
+
 
 # thread for getting transmitted data from file or orther source
 class tx_data_src(threading.Thread):
@@ -203,6 +205,8 @@ class my_top_block(gr.top_block):
         self.diff = options.diff
         self.randbinfile = options.rand_file
 
+        self.node_slot_start = 0
+
         # tx_only and rx_only 
         if options.tx_only and options.rx_only:
             sys.exit("System can not act as both tx only and rx only")
@@ -268,6 +272,10 @@ class my_top_block(gr.top_block):
                 line = cfgfile.readline()
                 continue
             print line[0:]
+            pos2 = line.find(NODE_SLOT)
+            if pos2 != -1:
+                self.node_slot_start = int(line[pos2+16:])
+
             curr = pos1 + len(host_addr_s)
             prev = curr
             while True:
@@ -361,7 +369,8 @@ class my_top_block(gr.top_block):
         print ' setup_tdma_engines'
         self.tdmaegns = []
         for i in range(self.n_devices):
-            initial_slot = NODES_PC*self._node_id + i
+            #initial_slot = NODES_PC*self._node_id + i
+            initial_slot = self.node_slot_start + i 
             print ' initial slot = %d' %(initial_slot)
             if self.tx_only == False:
                 number_of_slots = NETWORK_SIZE
