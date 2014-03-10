@@ -394,7 +394,7 @@ class my_top_block(gr.top_block):
                                                         self.link_rate,
                                                         self.addrs[i],
                                                         self.randbinfile,
-                                                        True))                
+                                                        False))                
     
     def setup_packet_framers(self):
         print ' setup_packet_framers'
