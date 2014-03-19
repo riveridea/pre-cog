@@ -30,7 +30,10 @@ import precog
 
 # From gr-digital
 from gnuradio import digital
-from 
+
+# For Continuous Transmitting
+from transmit_path import transmit_path
+from uhd_interface import uhd_transmitter
 
 import struct
 import sys
@@ -73,23 +76,34 @@ NODE_SLOT = 'node_slot_start='
 
 # thread for getting transmitted data from file or orther source
 class tx_data_src(threading.Thread):
-    def __init__(self, tx_path):
+    def __init__(self, tx_paths, addrs):
         threading.Thread.__init__(self)
-        self._txpath = tx_path
+        self._txpaths = tx_paths
+        self._txaddrs = addrs
+        self.srcfiles = []
         
     def run(self):
         #generate and send packets
         n = 0
         pktno = 0
+        pkt_size = 1280
         #pkt_size = int(options.size)
         print "tx_data_src -%s start tx" %(self.getName())
+        for i in range(self._txaddrs):
+            txfile_name = '/home/alexzh/' + self._txaddrs[i] + '_randtx'
+            source_file = open(txfile_name, 'r')
+            self.srcfiles.append(source_file)
+
         while 1:
             data = (50 - 2) * chr(pktno & 0xff)
             payload = struct.pack('!H', pktno & 0xffff) + data
-            self._txpath.send_pkt(payload, False)
-            n += len(payload)
+
+            for i in range(self._txpaths):
+                data = self.srcfiles[i].read(pkt_size - 2) 
+                self._txpaths[i].send_pkt(payload, False)
+            #n += len(payload)
             #sys.stderr.write('.')
-            pktno += 1
+            #pktno += 1
 
 # Socket Control Channel 
 class socket_server(threading.Thread):
@@ -237,8 +251,9 @@ class my_top_block(gr.top_block):
                     self.setup_multiply_consts()
                     self.setup_burst_gates()
                 else: # Continuously TX
+                    #Directly use the transmit_path to send packet
                     self.setup_usrp_sinks()
-                    
+                    self.setup_tx_paths(modulator, options)
            
             if options.tx_only == False and options.cont_tx == False:
                 if self.mod_type == "bpsk":
@@ -477,24 +492,33 @@ class my_top_block(gr.top_block):
                         print 'Generating Random binary file.... waiting'
                         fout.write(os.urandom(1280000000))  #generate a file of 8M random data
                         print '1.28G random binary file genearted'            
+
+    def setup_tx_paths(self, modulator, options):
+        print 'setup_tx_paths'
+        self._tx_paths = []
+        for i in range(self.n_devices):
+            self._tx_paths.append(transmit_path(modulator, options))
     
     def make_all_connections(self):
         print 'make all connections'
         for i in range(self.n_devices):
             # Trasnmitting Path
             if self.rx_only == False:
-                self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
-                self.connect((self.tdmaegns[i], 0), (self.pktfrms[i], 0))
-                if self.mod_type == "bpsk":
-                    self.connect((self.pktfrms[i], 0), (self.bpskmods[i], 0))
-                    self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
-                elif self.mod_type == "gmsk":
-                    self.connect((self.pktfrms[i], 0), (self.mods[i], 0))
-                    self.connect((self.mods[i], 0), (self.mlts[i], 0))
-                self.connect((self.mlts[i], 0), (self.bstgts[i], 0))
-                self.connect((self.bstgts[i], 0), (self.sinks[i], 0))
+                if cont_tx == False:
+                    self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
+                    self.connect((self.tdmaegns[i], 0), (self.pktfrms[i], 0))
+                    if self.mod_type == "bpsk":
+                        self.connect((self.pktfrms[i], 0), (self.bpskmods[i], 0))
+                        self.connect((self.bpskmods[i], 0), (self.mlts[i], 0))
+                    elif self.mod_type == "gmsk":
+                        self.connect((self.pktfrms[i], 0), (self.mods[i], 0))
+                        self.connect((self.mods[i], 0), (self.mlts[i], 0))
+                    self.connect((self.mlts[i], 0), (self.bstgts[i], 0))
+                    self.connect((self.bstgts[i], 0), (self.sinks[i], 0))
+                else: #continuous
+                    self.connect(self._tx_paths[i], self.sinks[i])
             # Receiving Path
-            if self.tx_only == False:
+            if self.tx_only == False and self.cont_tx == False:
                 if self.mod_type == "bpsk":
                     self.connect((self.rcvs[i], 0), (self.bpskdemods[i], 0))
                     self.connect((self.bpskdemods[i], 0), (self.pktdfrms[i], 0))
@@ -532,6 +556,10 @@ class my_top_block(gr.top_block):
             #start the transmitting of data packets
             if self.rx_only == False:
                 self.sinks[i].start()
+            #start the continuous transmitting
+            if self.cont_tx == True:
+                self._tx_data_src = tx_data_src()
+                self._tx_data_src.start()
 
 # /////////////////////////////////////////////////////////////////////////////
 #                                   main
@@ -607,6 +635,11 @@ def main():
                                  % (', '.join(mods.keys()),))
     parser.add_option("","--diff", action="store_true", default=False,
                       help="specify if the bpsk is differential or not")
+    parser.add_option("-m", "--modulation", type="choice", choices=mods.keys(),
+                      default='psk',
+                      help="Select modulation from: %s [default=%%default]"
+                            % (', '.join(mods.keys()),))
+
 
     ################################
     # Options for network variants
