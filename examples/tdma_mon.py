@@ -30,6 +30,7 @@ import precog
 
 # From gr-digital
 from gnuradio import digital
+from 
 
 import struct
 import sys
@@ -210,9 +211,12 @@ class my_top_block(gr.top_block):
         # tx_only and rx_only 
         if options.tx_only and options.rx_only:
             sys.exit("System can not act as both tx only and rx only")
+        elif options.tx_only and options.cont_tx:
+            sys.exit("System can only work as either tx only with TDD or tx only with continuously")
         else:
             self.tx_only = options.tx_only
             self.rx_only = options.rx_only
+            self.cont_tx = options.cont_tx
 
         #setup the flowgraphs
         self.find_all_devices()
@@ -222,17 +226,21 @@ class my_top_block(gr.top_block):
             self.mod_type = options.mod_type
              
             if options.rx_only == False:
-                self.setup_usrp_sinks()
-                self.setup_tdma_engines()
-                self.setup_packet_framers()
-                if self.mod_type == "bpsk":
-                    self.setup_bpsk_mods()
-                elif self.mod_type == "gmsk":
-                    self.setup_gmsk_mods()
-                self.setup_multiply_consts()
-                self.setup_burst_gates()
-
-            if options.tx_only == False:
+                if cont_tx == False: # TDD 
+                    self.setup_usrp_sinks()
+                    self.setup_tdma_engines()
+                    self.setup_packet_framers()
+                    if self.mod_type == "bpsk":
+                        self.setup_bpsk_mods()
+                    elif self.mod_type == "gmsk":
+                        self.setup_gmsk_mods()
+                    self.setup_multiply_consts()
+                    self.setup_burst_gates()
+                else: # Continuously TX
+                    self.setup_usrp_sinks()
+                    
+           
+            if options.tx_only == False and options.cont_tx == False:
                 if self.mod_type == "bpsk":
                     self.setup_bpsk_demods()
                 elif self.mod_type == "gmsk":
@@ -607,6 +615,8 @@ def main():
                       help="specify if the node is set as receiver only")
     parser.add_option("", "--tx-only", action="store_true", default=False,
                       help="specify if the node is set as transmitter only")
+    parser.add_option("", "--cont-tx", action="store_true", default=False,
+                      help="specify if the node is set as only transmitting continuously, not TDMA")
 					  
     for mod in demods.values():
         mod.add_options(expert_grp)
