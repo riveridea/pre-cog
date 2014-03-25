@@ -240,7 +240,7 @@ class my_top_block(gr.top_block):
             self.mod_type = options.mod_type
              
             if options.rx_only == False:
-                if cont_tx == False: # TDD 
+                if options.cont_tx == False: # TDD 
                     self.setup_usrp_sinks()
                     self.setup_tdma_engines()
                     self.setup_packet_framers()
@@ -504,7 +504,7 @@ class my_top_block(gr.top_block):
         for i in range(self.n_devices):
             # Trasnmitting Path
             if self.rx_only == False:
-                if cont_tx == False:
+                if self.cont_tx == False:
                     self.connect((self.rcvs[i], 0), (self.tdmaegns[i], 0))
                     self.connect((self.tdmaegns[i], 0), (self.pktfrms[i], 0))
                     if self.mod_type == "bpsk":
@@ -635,10 +635,6 @@ def main():
                                  % (', '.join(mods.keys()),))
     parser.add_option("","--diff", action="store_true", default=False,
                       help="specify if the bpsk is differential or not")
-    parser.add_option("-m", "--modulation", type="choice", choices=mods.keys(),
-                      default='psk',
-                      help="Select modulation from: %s [default=%%default]"
-                            % (', '.join(mods.keys()),))
 
 
     ################################
