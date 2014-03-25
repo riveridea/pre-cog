@@ -98,7 +98,7 @@ class tx_data_src(threading.Thread):
             data = (50 - 2) * chr(pktno & 0xff)
             payload = struct.pack('!H', pktno & 0xffff) + data
 
-            for i in range(self._txpaths):
+            for i in range(len(self._txpaths)):
                 data = self.srcfiles[i].read(pkt_size - 2) 
                 self._txpaths[i].send_pkt(payload, False)
             #n += len(payload)
