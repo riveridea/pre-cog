@@ -89,7 +89,7 @@ class tx_data_src(threading.Thread):
         pkt_size = 1280
         #pkt_size = int(options.size)
         print "tx_data_src -%s start tx" %(self.getName())
-        for i in range(self._txaddrs):
+        for i in range(len(self._txaddrs)):
             txfile_name = '/home/alexzh/' + self._txaddrs[i] + '_randtx'
             source_file = open(txfile_name, 'r')
             self.srcfiles.append(source_file)
