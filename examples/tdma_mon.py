@@ -559,7 +559,7 @@ class my_top_block(gr.top_block):
                 self.sinks[i].start()
             #start the continuous transmitting
             if self.cont_tx == True:
-                self._tx_data_src = tx_data_src()
+                self._tx_data_src = tx_data_src(self._tx_paths, self.addrs)
                 self._tx_data_src.start()
 
 # /////////////////////////////////////////////////////////////////////////////
