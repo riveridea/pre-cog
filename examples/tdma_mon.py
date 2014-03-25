@@ -496,6 +496,7 @@ class my_top_block(gr.top_block):
     def setup_tx_paths(self, modulator, options):
         print 'setup_tx_paths'
         self._tx_paths = []
+
         for i in range(self.n_devices):
             self._tx_paths.append(transmit_path(modulator, options))
     
@@ -655,6 +656,9 @@ def main():
     if len(args) != 0:
         parser.print_help(sys.stderr)
         sys.exit(1)
+
+    transmit_path.add_options(parser, expert_grp)
+#    uhd_transmitter.add_options(parser)
 
     # build the graph
     tb = my_top_block(node_types[options.node_type],
