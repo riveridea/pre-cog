@@ -651,13 +651,14 @@ def main():
     for mod in demods.values():
         mod.add_options(expert_grp)
 
+    transmit_path.add_options(parser, expert_grp)
+
     (options, args) = parser.parse_args ()
 
     if len(args) != 0:
         parser.print_help(sys.stderr)
         sys.exit(1)
 
-    transmit_path.add_options(parser, expert_grp)
 #    uhd_transmitter.add_options(parser)
 
     # build the graph
