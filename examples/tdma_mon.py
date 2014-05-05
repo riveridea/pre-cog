@@ -495,7 +495,7 @@ class my_top_block(gr.top_block):
 			    with open(xfile, 'r'):
                                 xfileid = open(xfile, 'r')
 
-                        except IOError
+                        except IOError:
 			    with open(xfile, 'wb') as fout:
 			        source_file.seek(0)
 			        bytes_per_slot = int( ( SLOT_INTV - GRD_INTV ) * self.link_rate / 8 )                                
