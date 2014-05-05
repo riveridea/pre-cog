@@ -484,7 +484,7 @@ class my_top_block(gr.top_block):
                 self.sinks[i].set_time_source("mimo", 0)  # Set the time source without GPS to MIMO cable
                 self.sinks[i].set_clock_source("mimo",0)
             #generate the random datafile for the transmitter if read data from file
-            if self.randbinfile == True:
+            if self.randbinfile != 0:
                 txfile_name = '/home/alexzh/' + self.addrs[i] + '_randtx'
 		xfile = '/home/alexzh/' + self.addrs[i] + '_x'
                 try:
@@ -497,6 +497,7 @@ class my_top_block(gr.top_block):
 
                         except IOError:
 			    with open(xfile, 'wb') as fout:
+				print 'Gnerating the repeated packet file for x sequence'
 			        source_file.seek(0)
 			        bytes_per_slot = int( ( SLOT_INTV - GRD_INTV ) * self.link_rate / 8 )                                
 			        xpkt = source_file.read(bytes_per_slot - 64 -100)
