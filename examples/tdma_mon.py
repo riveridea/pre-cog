@@ -73,6 +73,8 @@ NODE_PORT = 23001   # port where cluster node capturing the socket message
 
 NODE_SLOT = 'node_slot_start='
 
+SLOT_INTV = 0.1
+GRD_INTV = 0.04
 
 # thread for getting transmitted data from file or orther source
 class tx_data_src(threading.Thread):
@@ -484,9 +486,13 @@ class my_top_block(gr.top_block):
             #generate the random datafile for the transmitter if read data from file
             if self.randbinfile == True:
                 txfile_name = '/home/alexzh/' + self.addrs[i] + '_randtx'
+		xfile = '/home/alexzh/' + self.addrs[i] + '_x'
                 try:
                     with open(txfile_name, 'r'):
                         source_file = open(txfile_name, 'r')
+			source_file.seek(0)
+			bytes_per_slot = int( ( SLOT_INTV - GRD_INTV ) * self.link_rate / 8 )
+			xpkt = source_file.read(bytes_per_slot - 64 -100)
                 except IOError:
                     with open(txfile_name, 'wb') as fout:
                         print 'Generating Random binary file.... waiting'
