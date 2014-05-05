@@ -607,7 +607,9 @@ def main():
                       help="set packet size [default=%default]")
     parser.add_option("","--from-file", default=None,
                       help="input file of samples to demod")
-    parser.add_option("","--rand-file", action="store_true", default=False,
+    #parser.add_option("","--rand-file", action="store_true", default=False,
+    #                  help="specify yes or no if a random binary data file will be used for the USRP transmitter")
+    parser.add_option("","--rand-file",type="intx", default=0,
                       help="specify yes or no if a random binary data file will be used for the USRP transmitter")
 
     parser.add_option("", "--node-type", type="choice", choices=node_types.keys(),

@@ -183,15 +183,21 @@ class tdma_engine(gr.block):
             #    prefix = prefix + seg
 
             rdata = ''
-            if self.from_file and self.sfile != 0:
+            if self.from_file == 1 and self.sfile != 0:
                 rdata = self.sfile.read(self.bytes_per_slot - 64*self.prefix_len -100)
                 if len(rdata) > 0:
+                    pad_d = rdata
+            elif self.from_file == 2 and self.sfile != 0: #repeated sending the same packets for Virtual MIMO testing
+ 		self.sfile.seek(0) #go the beginning of file
+		rdata = self.sfile.read(self.bytes_per_slot - 64*self.prefix_len -100)
+		if len(rdata) > 0:
                     pad_d = rdata
             else:
                 if self.initial_slot == 0:
                     pad_d = 16*pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
                 else:
                     pad_d = 16*pn511_1
+                
             pad_d = prefix + pad_d
  
             #send PN and data at different slots for MIMO
