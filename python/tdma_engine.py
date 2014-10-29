@@ -193,7 +193,7 @@ class tdma_engine(gr.block):
 		if len(rdata) > 0:
                     pad_d = rdata
             else:
-                if self.initial_slot == 0:
+                if self.initial_slot == 0: # use the unique PN code to specify the first slot
                     pad_d = 16*pn511_0 #+ (self.bytes_per_slot - 64) * chr(self.pktno & 0xff)
                 else:
                     pad_d = 16*pn511_1
