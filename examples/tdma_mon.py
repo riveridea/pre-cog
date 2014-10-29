@@ -359,6 +359,8 @@ class my_top_block(gr.top_block):
             if self.rcvs[i].get_time_source(0) == "none":
                 self.rcvs[i].set_time_source("mimo", 0)  # Set the time source without GPS to MIMO cable
                 self.rcvs[i].set_clock_source("mimo",0)
+            else:
+                self.rcvs[i].set_clock_source("external", 0)
             self.rcvs[i].set_samp_rate(self.sample_rate)
 	    #self.rcvs[i].set_center_freq(self.center_freq, 0)
             self.rcvs[i].set_center_freq(uhd.tune_request(self.center_freq, self.sample_rate*12), 0)
@@ -483,6 +485,8 @@ class my_top_block(gr.top_block):
             if self.sinks[i].get_time_source(0) == "none":
                 self.sinks[i].set_time_source("mimo", 0)  # Set the time source without GPS to MIMO cable
                 self.sinks[i].set_clock_source("mimo",0)
+            else:
+                self.sinks[i].set_clock_source("external", 0)
             #generate the random datafile for the transmitter if read data from file
             if self.randbinfile != 0:
                 txfile_name = '/home/alexzh/' + self.addrs[i] + '_randtx'
